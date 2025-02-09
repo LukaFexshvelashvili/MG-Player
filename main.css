@@ -617,8 +617,10 @@ body {
   top: 15px;
   right: 15px;
   z-index: 5;
+  transition: visibility 0.1s, opacity 0.3s;
 }
 .mg_player_eps .mg_player_eps_container {
+  transform: translateX(300px);
   display: flex;
   align-items: flex-start;
   position: absolute;
@@ -631,7 +633,11 @@ body {
   background-color: rgba(0, 0, 0, 0.4);
   -webkit-backdrop-filter: blur(20px);
           backdrop-filter: blur(20px);
+  transition: transform 0.4s;
   overflow: hidden;
+}
+.mg_player_eps .mg_player_eps_container.mg_player_eps_container_show {
+  transform: translateX(0px);
 }
 .mg_player_eps .mg_player_eps_container .mg_player_eps_scroll {
   height: 100%;
@@ -716,7 +722,6 @@ body {
   background-color: var(--mainHover);
 }
 .mg_player_eps .mg_player_ep_button {
-  display: none;
   outline: none;
   border: none;
   height: 32px;
@@ -728,7 +733,10 @@ body {
   font-family: Bold;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+.mg_player_eps .mg_player_ep_button.mg_player_ep_button_hide {
+  opacity: 0;
 }
 .mg_player_eps .mg_player_ep_button:hover {
   background-color: var(--mainHover);

@@ -66,6 +66,12 @@ const mg_context_menu = document.querySelector(".mg_context_menu");
 // * EPISODES
 const mg_player_eps_scroll = document.querySelector(".mg_player_eps_scroll");
 const mg_player_seasons = document.querySelector(".mg_player_seasons");
+const mg_player_eps = document.querySelector(".mg_player_eps");
+const mg_player_eps_container = document.querySelector(
+  ".mg_player_eps_container"
+);
+const mg_player_ep_button = document.querySelector(".mg_player_ep_button");
+const mg_eps_closer = document.querySelector(".mg_eps_closer");
 let active_season = null;
 let active_episode = null;
 
@@ -110,15 +116,26 @@ function initializePlayer() {
       cutIfTooLarge(mg_save, 2);
       localStorage.setItem("mg_player", JSON.stringify(mg_save));
     } else {
-      mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 });
+      if (MG_PLAYER.seasons) {
+        mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
+      } else {
+        mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 });
+      }
       cutIfTooLarge(mg_save, 2);
       localStorage.setItem("mg_player", JSON.stringify(mg_save));
     }
   } else {
-    localStorage.setItem(
-      "mg_player",
-      JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 }])
-    );
+    if (MG_PLAYER.seasons) {
+      localStorage.setItem(
+        "mg_player",
+        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
+      );
+    } else {
+      localStorage.setItem(
+        "mg_player",
+        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 }])
+      );
+    }
   }
 
   for (const [quality] of Object.entries(
@@ -139,6 +156,8 @@ initializePlayer();
 
 mg_player.addEventListener("contextmenu", contextClick);
 mg_player.addEventListener("click", playerClick);
+mg_player_ep_button.addEventListener("click", openEpisodes);
+mg_eps_closer.addEventListener("click", closeEpisodes);
 mg_player.addEventListener("mousemove", mouseMoving);
 mg_player.addEventListener("touchmove", mouseMoving);
 mg_fullscreen.addEventListener("click", fullscreenOnOff);
@@ -161,7 +180,7 @@ mg_timeline_scaler.addEventListener("touchmove", measureTimeTouch);
 mg_timeline_scaler.addEventListener("touchend", removeSeeTime);
 
 mg_timeline_scaler.addEventListener("mousemove", seeTime);
-mg_player.addEventListener("touchmove", seeTimeTouch);
+mg_timeline_scaler.addEventListener("touchmove", seeTimeTouch);
 mg_timeline_scaler.addEventListener("mouseout", removeSeeTime);
 document.addEventListener("keydown", handleKeyPress);
 
@@ -171,12 +190,13 @@ document.addEventListener("keydown", handleKeyPress);
 mg_video.addEventListener("waiting", function () {
   mg_loader.classList.remove("mg_loader_hidden");
 });
-addEventListener("waitingforkey", () => {
+mg_video.addEventListener("waitingforkey", () => {
   mg_loader.classList.remove("mg_loader_hidden");
 });
 
 // * START
 mg_video.addEventListener("playing", () => {
+  mg_error_block.classList.add("mg_error_block_hidden");
   mg_loader.classList.add("mg_loader_hidden");
 });
 
@@ -184,6 +204,7 @@ mg_video.addEventListener("canplaythrough", () => {
   mg_loader.classList.add("mg_loader_hidden");
 });
 mg_video.addEventListener("loadeddata", function () {
+  mg_error_block.classList.add("mg_error_block_hidden");
   let getLocaledTime = getSavedTime();
   mg_video.currentTime = getLocaledTime.toFixed(6);
   measureTime(getLocaledTime);
@@ -207,7 +228,9 @@ mg_video.addEventListener("timeupdate", function () {
 mg_video.addEventListener("error", function () {
   mg_error_block.classList.remove("mg_error_block_hidden");
 });
-
+mg_video.addEventListener("stalled", function () {
+  mg_error_block.classList.remove("mg_error_block_hidden");
+});
 let moveTimeout;
 function mouseMoving() {
   if (is_started) {
@@ -225,6 +248,17 @@ function mouseMoving() {
 }
 
 // ! FUNCTIONS
+function openEpisodes() {
+  mg_player_eps_container.classList.add("mg_player_eps_container_show");
+  mg_player_ep_button.classList.add("mg_player_ep_button_hide");
+}
+function closeEpisodes() {
+  mg_player_eps_container.classList.remove("mg_player_eps_container_show");
+  mg_player_ep_button.classList.remove("mg_player_ep_button_hide");
+}
+if (!MG_PLAYER.seasons) {
+  mg_player_eps.remove();
+}
 
 let isDragging = false;
 
@@ -370,12 +404,16 @@ function skipRightDbl() {
 
 function stoppedMoving() {
   mg_controls.classList.add("mg_controls_hidden");
+  mg_player_eps.classList.add("mg_controls_hidden");
   mg_player.classList.add("mg_hide_cursor");
+
+  closeEpisodes();
   closeSettings();
 }
 
 function startedMoving() {
   mg_controls.classList.remove("mg_controls_hidden");
+  mg_player_eps.classList.remove("mg_controls_hidden");
   mg_player.classList.remove("mg_hide_cursor");
 }
 function downloadMovie() {
@@ -777,11 +815,11 @@ function mouseTouchDragger() {
 
 // * FOR EPISODES
 function initialiseEpisodes() {
-  if (active_season == null && active_episode == null) {
-    active_season = 0;
-    active_episode = 0;
-  }
   if (MG_PLAYER.seasons) {
+    if (active_season == null && active_episode == null) {
+      active_season = 1;
+      active_episode = 1;
+    }
     // ! SEASONS
     printSeasons();
 
@@ -829,12 +867,13 @@ function printEpisodes() {
   mg_eps_childrens.forEach((item) => {
     item.addEventListener("click", () => {
       active_episode = item.getAttribute("data-ep");
-
+      mg_error_block.classList.add("mg_error_block_hidden");
       changeEpisode(getEpisodeRequest());
       mg_eps_childrens.forEach((k) =>
         k.classList.remove("mg_ep_button_active")
       );
       item.classList.add("mg_ep_button_active");
+      closeEpisodes();
     });
   });
 }
