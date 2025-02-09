@@ -42,8 +42,7 @@ body {
   position: absolute;
   height: 100%;
   width: 40%;
-  background-color: rgba(255, 255, 255, 0.2);
-  visibility: hidden;
+  display: none;
 }
 
 .mg_skip_left {
@@ -55,12 +54,52 @@ body {
 }
 
 .mg_player {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   position: relative;
-  height: 550px;
+  height: 400px;
   aspect-ratio: 16/9;
   border-radius: 15px;
   background-color: black;
   overflow: hidden;
+}
+
+.mg_error_block {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  z-index: 6;
+}
+.mg_error_block .mg_error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateZ(0);
+  color: var(--main);
+  height: 120px;
+  padding: 15px;
+  width: 320px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: semiBold;
+  line-height: 26px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  background-color: rgb(18, 0, 6);
+}
+
+.mg_error_hidden {
+  display: none;
 }
 
 .mg_video {
@@ -75,7 +114,7 @@ body {
 #mg_sound_slider {
   border-radius: 5px;
   color: var(--main);
-  --thumb-height: 1px;
+  --thumb-height: 0px;
   --track-height: 4px;
   --track-color: #3e3e3e;
   --clip-edges: 0.125em;
@@ -156,6 +195,26 @@ body {
 #mg_sound_slider::-moz-range-progress {
   height: calc(var(--track-height) + 1px);
   border-radius: var(--track-height);
+}
+
+.mg_context_menu {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  cursor: pointer;
+  z-index: 6;
+  position: absolute;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #161616;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: Medium;
+  font-size: 11px;
+  letter-spacing: 0.5px;
 }
 
 .mg_main_play {
@@ -342,7 +401,7 @@ body {
   height: 200px;
   width: 280px;
   border-radius: 10px;
-  background-color: rgba(62, 62, 62, 0.35);
+  background-color: rgba(0, 0, 0, 0.5);
   -webkit-backdrop-filter: blur(15px);
           backdrop-filter: blur(15px);
   display: flex;
@@ -425,7 +484,7 @@ body {
 }
 
 .mg_play_pause {
-  height: 18px;
+  height: 20px;
   aspect-ratio: 1/1;
 }
 .mg_play_pause svg {
@@ -450,7 +509,7 @@ body {
   width: 20px;
 }
 .mg_sound .mg_sound_icon {
-  height: 20px;
+  height: 21px;
   aspect-ratio: 1/1;
 }
 .mg_sound .mg_sound_icon svg {
@@ -492,6 +551,9 @@ body {
   }
 }
 .mg_play_pause_full {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   position: absolute;
   height: 100%;
   width: 100%;
@@ -508,9 +570,15 @@ body {
   align-items: center;
   color: white;
   font-size: 11px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .mg_timeline_helper {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s;
@@ -541,4 +609,74 @@ body {
   font-family: Medium;
   font-size: 12px;
   background-color: rgb(22, 22, 22);
+}
+
+@media (max-width: 900px) {
+  .mg_skip_left,
+  .mg_skip_right {
+    display: block;
+  }
+  .mg_timeline_helper {
+    height: 0;
+    width: 0;
+  }
+  .mg_timeline_helper video {
+    display: none;
+    height: 0%;
+    width: 0%;
+  }
+}
+@media (max-width: 500px) {
+  .mg_mob_off {
+    display: none !important;
+  }
+  .mg_first_row {
+    gap: 10px;
+  }
+  .mg_last_row {
+    gap: 15px;
+  }
+  .mg_settings .mg_settings_block {
+    width: 300px;
+    height: 160px;
+    bottom: 40px;
+  }
+  .mg_settings .mg_button {
+    font-size: 11px;
+    gap: 3px;
+  }
+  .mg_settings .mg_cols {
+    font-size: 12px;
+    gap: 3px;
+  }
+  #mg_settings_toggler {
+    height: 16px;
+  }
+  #mg_frame_icon {
+    height: 17px;
+  }
+  #mg_sound_on_ {
+    height: 18px;
+  }
+  #mg_sound_off_ {
+    height: 18px;
+  }
+  #mg_play_ {
+    height: 20px;
+  }
+  #mg_pause_ {
+    height: 20px;
+  }
+  #mg_fullscreen_on_ {
+    height: 20px;
+  }
+  #mg_fullscreen_off_ {
+    height: 20px;
+  }
+  #mg_sound_slider {
+    display: none;
+  }
+  .mg_sound:hover {
+    width: auto;
+  }
 }/*# sourceMappingURL=main.css.map */

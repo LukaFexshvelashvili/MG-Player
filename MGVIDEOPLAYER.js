@@ -1,6 +1,6 @@
 // * MAIN
-
 const mg_player = document.querySelector(".mg_player");
+const mg_error_block = document.querySelector(".mg_error_block");
 const mg_video_thumbnail = document.querySelector(".mg_video_thumbnail");
 const mg_loader = document.querySelector(".mg_loader");
 const mg_video = document.querySelector(".mg_video");
@@ -60,14 +60,57 @@ const mg_languages = document.querySelector(".mg_languages");
 // * QUALITIES
 const mg_qualities = document.querySelector(".mg_qualities");
 
+// * CONTEXTMENU
+const mg_context_menu = document.querySelector(".mg_context_menu");
+
+let mg_main_controls;
+
+if (localStorage.getItem("mg_player_controls")) {
+  mg_main_controls = JSON.parse(localStorage.getItem("mg_player_controls"));
+} else {
+  mg_main_controls = { lang: "DEF", volume: 1, speed: 1, quality: "DEF" };
+  JSON.parse(
+    localStorage.setItem("mg_player_controls", JSON.stringify(mg_main_controls))
+  );
+}
+
 let stoppedmove = false;
 let is_started = false;
 let is_loaded = false;
+let time_measuring = true;
 
 function initializePlayer() {
-  mg_video.src = MG_PLAYER.src;
-  mg_helper_video.src = MG_PLAYER.src;
+  if (mg_main_controls.volume == 0) {
+    soundOnOff("off");
+  }
+  getCheckOfControls();
   mg_video_thumbnail.src = MG_PLAYER.image;
+
+  // TODO TIMESAVES / GETTIMES
+  if (localStorage.getItem("mg_player")) {
+    let mg_save_ = localStorage.getItem("mg_player");
+    let mg_save = JSON.parse(mg_save_);
+    let get_cur = mg_save.filter((item) => {
+      return item.id == MG_PLAYER.id;
+    });
+    if (get_cur.length !== 0) {
+      movetoFirstItem(
+        mg_save,
+        mg_save.findIndex((item) => item.id == get_cur[0].id)
+      );
+      cutIfTooLarge(mg_save, 2);
+      localStorage.setItem("mg_player", JSON.stringify(mg_save));
+    } else {
+      mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 });
+      cutIfTooLarge(mg_save, 2);
+      localStorage.setItem("mg_player", JSON.stringify(mg_save));
+    }
+  } else {
+    localStorage.setItem(
+      "mg_player",
+      JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 }])
+    );
+  }
 
   for (const [quality, item] of Object.entries(MG_PLAYER.quality)) {
     mg_qualities.innerHTML += `<div class='mg_button${
@@ -83,8 +126,10 @@ function initializePlayer() {
 }
 initializePlayer();
 
+mg_player.addEventListener("contextmenu", contextClick);
 mg_player.addEventListener("click", playerClick);
 mg_player.addEventListener("mousemove", mouseMoving);
+mg_player.addEventListener("touchmove", mouseMoving);
 mg_fullscreen.addEventListener("click", fullscreenOnOff);
 mg_main_play.addEventListener("click", firstStart);
 mg_skip_left.addEventListener("click", skipLeftDbl);
@@ -100,7 +145,12 @@ mg_settings_toggler.addEventListener("click", toggleSettings);
 mg_frame.addEventListener("click", togglePIP);
 mg_download.addEventListener("click", downloadMovie);
 mg_timeline_scaler.addEventListener("click", measureTimeMouse);
+mg_timeline_scaler.addEventListener("touchstart", measureTimeTouch);
+mg_timeline_scaler.addEventListener("touchmove", measureTimeTouch);
+mg_timeline_scaler.addEventListener("touchend", removeSeeTime);
+
 mg_timeline_scaler.addEventListener("mousemove", seeTime);
+mg_player.addEventListener("touchmove", seeTimeTouch);
 mg_timeline_scaler.addEventListener("mouseout", removeSeeTime);
 document.addEventListener("keydown", handleKeyPress);
 
@@ -110,7 +160,7 @@ document.addEventListener("keydown", handleKeyPress);
 mg_video.addEventListener("waiting", function () {
   mg_loader.classList.remove("mg_loader_hidden");
 });
-addEventListener("waitingforkey", (event) => {
+addEventListener("waitingforkey", () => {
   mg_loader.classList.remove("mg_loader_hidden");
 });
 
@@ -123,18 +173,29 @@ mg_video.addEventListener("canplaythrough", () => {
   mg_loader.classList.add("mg_loader_hidden");
 });
 mg_video.addEventListener("loadeddata", function () {
+  let getLocaledTime = getSavedTime();
+  mg_video.currentTime = getLocaledTime;
+  measureTime(getLocaledTime);
   is_loaded = true;
   mg_loader.classList.add("mg_loader_hidden");
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   mg_endtime.innerHTML = formatTime(mg_video.duration);
 });
 // * ONGOING
+let lastUpdate = 0;
 mg_video.addEventListener("timeupdate", function () {
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   measureTime(mg_video.currentTime);
+  lastUpdate++;
+  if (lastUpdate >= 12) {
+    replaceTimeline(mg_video.currentTime);
+    lastUpdate = 0;
+  }
 });
 // * ERROR
-mg_video.addEventListener("error", function () {});
+mg_video.addEventListener("error", function () {
+  mg_error_block.classList.remove("mg_error_block_hidden");
+});
 
 let moveTimeout;
 function mouseMoving() {
@@ -153,6 +214,43 @@ function mouseMoving() {
 }
 
 // ! FUNCTIONS
+
+let isDragging = false;
+
+function onDraging(mouse) {
+  if (isDragging) {
+    var getPer = (100 / mg_timeline_scaler.offsetWidth) * mouse.offsetX;
+    mg_time_indicator.style.width = getPer + "%";
+  }
+}
+function onDragingTouch(event) {
+  const touch = event.touches[0];
+  if (isDragging) {
+    var getPer =
+      (100 / mg_timeline_scaler.offsetWidth) *
+      (touch.clientX - mg_timeline_scaler.getBoundingClientRect().left);
+    mg_time_indicator.style.width = getPer + "%";
+  }
+}
+
+mouseTouchDragger();
+
+let sTimer;
+function contextClick(e) {
+  e.preventDefault();
+  const xPos = e.offsetX;
+  const yPos = e.offsetY;
+  clearTimeout(sTimer);
+  mg_context_menu.style.left = `${xPos}px`;
+  mg_context_menu.style.top = `${yPos}px`;
+  mg_context_menu.style.display = "flex";
+  sTimer = setTimeout(() => {
+    mg_context_menu.style.display = "none";
+  }, 1500);
+}
+document.addEventListener("click", function () {
+  mg_context_menu.style.display = "none";
+});
 const mg_qualitiesChildrens = Array.from(mg_qualities.children);
 const mg_languagesChildrens = Array.from(mg_languages.children);
 
@@ -161,6 +259,7 @@ mg_qualitiesChildrens.forEach((item) => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.paused;
     mg_video.src = MG_PLAYER.quality[item.innerText].src;
+    saveControls({ quality: item.innerText });
 
     mg_video.currentTime = saveTime;
     if (saveState == false) {
@@ -177,7 +276,7 @@ mg_languagesChildrens.forEach((item) => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.isPaused;
     mg_video.src = MG_PLAYER.languages[item.innerText].src;
-
+    saveControls({ lang: item.innerText });
     mg_video.currentTime = saveTime;
     if (saveState == false) {
       mg_video.play();
@@ -192,6 +291,7 @@ mg_speed_button.forEach((item) => {
   item.addEventListener("click", () => {
     mg_video.playbackRate = item.innerText;
     mg_speed_button.forEach((k) => k.classList.remove("mg_button_active"));
+    saveControls({ speed: item.innerText });
     item.classList.add("mg_button_active");
   });
 });
@@ -332,6 +432,24 @@ function seeTime(mouse) {
     mg_time_indicator_helper.style.width = getPer + "%";
   }
 }
+function seeTimeTouch(event) {
+  const touch = event.touches[0];
+  if (is_loaded) {
+    const getPer =
+      (100 / mg_timeline_scaler.offsetWidth) *
+      (touch.clientX - mg_timeline_scaler.getBoundingClientRect().left);
+    mg_timeline_helper.style.opacity = 1;
+    mg_timeline_helper.style.transform = `translateX(${
+      touch.clientX -
+      mg_timeline_scaler.getBoundingClientRect().left -
+      mg_timeline_helper.offsetWidth / 2
+    }px)`;
+    const vidTime = percentageToTime(getPer);
+    mg_timeline_helper_time.innerHTML = formatTime(vidTime);
+    mg_helper_video.currentTime = vidTime;
+    mg_time_indicator_helper.style.width = getPer + "%";
+  }
+}
 
 function measureTimeMouse(mouse) {
   if (is_loaded) {
@@ -340,9 +458,26 @@ function measureTimeMouse(mouse) {
     mg_video.currentTime = (mg_video.duration / 100) * getPer;
   }
 }
+function measureTimeTouch(event) {
+  const position =
+    event instanceof MouseEvent
+      ? event.offsetX
+      : event.touches[0].clientX -
+        mg_timeline_scaler.getBoundingClientRect().left;
+
+  if (is_loaded) {
+    const getPer = (100 / mg_timeline_scaler.offsetWidth) * position;
+    mg_time_indicator.style.width = getPer + "%";
+    mg_video.currentTime = (mg_video.duration / 100) * getPer;
+    mg_starttime.innerHTML = formatTime(mg_video.currentTime);
+  }
+}
+
 function measureTime(time) {
-  var getPer = (100 / mg_video.duration) * time;
-  mg_time_indicator.style.width = getPer + "%";
+  if (is_loaded && time_measuring) {
+    var getPer = (100 / mg_video.duration) * time;
+    mg_time_indicator.style.width = getPer + "%";
+  }
 }
 function measureSound() {
   if (mg_sound_slider.value == 0) {
@@ -350,19 +485,39 @@ function measureSound() {
   } else {
     changeSounds("on");
   }
-
+  mg_main_controls.volume = mg_sound_slider.value / 100;
+  saveControls({ volume: mg_sound_slider.value / 100 });
   mg_video.volume = mg_sound_slider.value / 100;
 }
+function measureSoundHand(volume) {
+  if (volume >= 0 && volume <= 1) {
+    if (mg_sound_slider.value == 0) {
+      changeSounds("off");
+    } else {
+      changeSounds("on");
+    }
 
+    mg_video.volume = volume;
+    mg_sound_slider.value = volume * 100;
+  }
+}
 function soundOnOff() {
   if (mg_video.volume > 0) {
     changeSounds("off");
     mg_video.volume = 0;
     mg_sound_slider.value = 0;
+    saveControls({ volume: 0 });
   } else {
     changeSounds("on");
-    mg_video.volume = 1;
-    mg_sound_slider.value = 100;
+    if (mg_main_controls.volume > 0.08) {
+      mg_video.volume = mg_main_controls.volume;
+      mg_sound_slider.value = mg_main_controls.volume * 100;
+      saveControls({ volume: mg_main_controls.volume });
+    } else {
+      mg_video.volume = 1;
+      mg_sound_slider.value = 100;
+      saveControls({ volume: 1 });
+    }
   }
 }
 function soundDown() {
@@ -377,6 +532,7 @@ function soundDown() {
     mg_sound_slider.value = 0;
     changeSounds("off");
   }
+  saveControls({ volume: mg_video.volume });
 }
 function soundUp() {
   if (mg_video.volume <= 0.95) {
@@ -387,6 +543,7 @@ function soundUp() {
     mg_video.volume = 1;
     mg_sound_slider.value = 100;
   }
+  saveControls({ volume: mg_video.volume });
 }
 function playPause() {
   mouseMoving();
@@ -452,4 +609,138 @@ function dbClick(callback) {
     clickCount = 0;
     callback();
   }
+}
+function movetoFirstItem(array, fromIndex) {
+  if (fromIndex < 0 || fromIndex >= array.length) {
+    return array;
+  }
+
+  const item = array.splice(fromIndex, 1)[0];
+  array.splice(0, 0, item);
+  return array;
+}
+function cutIfTooLarge(list, number) {
+  if (list.length > number) {
+    list.splice(number);
+  }
+}
+function replaceTimeline(time) {
+  let mg_save_ = localStorage.getItem("mg_player");
+  let mg_save = JSON.parse(mg_save_);
+  let get_index = mg_save.findIndex((item) => item.id == MG_PLAYER.id);
+  mg_save[get_index].time = time;
+  localStorage.setItem("mg_player", JSON.stringify(mg_save));
+}
+function getSavedTime() {
+  let mg_save_ = localStorage.getItem("mg_player");
+  let mg_save = JSON.parse(mg_save_);
+  let get_index = mg_save.findIndex((item) => item.id == MG_PLAYER.id);
+
+  if (get_index !== -1) {
+    return mg_save[get_index].time;
+  } else {
+    return 0;
+  }
+}
+
+function getCheckOfControls() {
+  if (mg_main_controls.quality == "HD" && MG_PLAYER.quality.HD.src) {
+    mg_video.src = MG_PLAYER.quality.HD.src;
+    mg_helper_video.src = MG_PLAYER.quality.HD.src;
+  } else if (mg_main_controls.lang == "SD" && MG_PLAYER.quality.SD.src) {
+    mg_video.src = MG_PLAYER.quality.SD.src;
+    mg_helper_video.src = MG_PLAYER.quality.SD.src;
+  } else {
+    mg_video.src = MG_PLAYER.src;
+    mg_helper_video.src = MG_PLAYER.src;
+  }
+  if (mg_main_controls.lang == "GEO" && MG_PLAYER.languages.GEO.src) {
+    mg_video.src = MG_PLAYER.languages.GEO.src;
+    mg_helper_video.src = MG_PLAYER.languages.GEO.src;
+  } else if (mg_main_controls.lang == "ENG" && MG_PLAYER.languages.ENG.src) {
+    mg_video.src = MG_PLAYER.languages.ENG.src;
+    mg_helper_video.src = MG_PLAYER.languages.ENG.src;
+  } else {
+    mg_video.src = MG_PLAYER.src;
+    mg_helper_video.src = MG_PLAYER.src;
+  }
+
+  mg_speed_button.forEach((item) => {
+    if (item.innerHTML.trim() == mg_main_controls.speed) {
+      mg_video.playbackRate = item.innerHTML.trim();
+      mg_speed_button.forEach((k) => k.classList.remove("mg_button_active"));
+      item.classList.add("mg_button_active");
+    }
+  });
+  measureSoundHand(mg_main_controls.volume);
+}
+function saveControls({ lang, volume, speed, quality }) {
+  if (localStorage.getItem("mg_player_controls")) {
+    let mg_save_ = localStorage.getItem("mg_player_controls");
+    let mg_player_controls = JSON.parse(mg_save_);
+
+    mg_player_controls.lang = lang ?? mg_player_controls.lang;
+    mg_player_controls.volume = volume ?? mg_player_controls.volume;
+    mg_player_controls.speed = speed ?? mg_player_controls.speed;
+    mg_player_controls.quality = quality ?? mg_player_controls.quality;
+    localStorage.setItem(
+      "mg_player_controls",
+      JSON.stringify(mg_player_controls)
+    );
+  }
+}
+
+// ! DRAG FUNCTIONS
+
+function mouseTouchDragger() {
+  mg_timeline_scaler.addEventListener("mousedown", function () {
+    isDragging = true;
+    time_measuring = false;
+    mg_timeline_scaler.addEventListener("mousemove", onDraging);
+  });
+  mg_timeline_scaler.addEventListener("mouseup", function () {
+    if (isDragging) {
+      isDragging = false;
+      time_measuring = true;
+
+      mg_timeline_scaler.removeEventListener("mousemove", onDraging);
+    }
+  });
+  mg_timeline_scaler.addEventListener("mouseleave", function () {
+    if (isDragging) {
+      isDragging = false;
+      time_measuring = true;
+
+      mg_timeline_scaler.removeEventListener("mousemove", onDraging);
+    }
+  });
+
+  // TOUCH (MOBILE)
+  mg_timeline_scaler.addEventListener("touchstart", function (event) {
+    event.preventDefault();
+
+    isDragging = true;
+    time_measuring = false;
+
+    let touch = event.touches[0];
+    onDraging(touch);
+
+    mg_timeline_scaler.addEventListener("touchmove", onDragingTouch);
+  });
+
+  mg_timeline_scaler.addEventListener("touchend", function () {
+    if (isDragging) {
+      isDragging = false;
+      time_measuring = true;
+      mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
+    }
+  });
+
+  mg_timeline_scaler.addEventListener("touchcancel", function () {
+    if (isDragging) {
+      isDragging = false;
+      time_measuring = true;
+      mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
+    }
+  });
 }
