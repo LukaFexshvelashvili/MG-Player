@@ -93,6 +93,9 @@ function initializePlayer() {
   if (mg_main_controls.volume == 0) {
     soundOnOff("off");
   }
+  if (MG_PLAYER.seasons) {
+    mg_player_eps.classList.remove("mg_player_eps_hidden");
+  }
   getCheckOfControls();
   mg_video_thumbnail.src = MG_PLAYER.image;
 
@@ -597,12 +600,21 @@ function soundUp() {
   }
   saveControls({ volume: mg_video.volume });
 }
-function playPause() {
+function playPause(command) {
   mouseMoving();
   if (mg_video.paused) {
     changeControls("play");
     mg_video.play();
   } else {
+    changeControls("pause");
+    mg_video.pause();
+  }
+}
+function playPauseHand(command) {
+  if (command == "play") {
+    changeControls("play");
+    mg_video.play();
+  } else if (command == "pause") {
     changeControls("pause");
     mg_video.pause();
   }
@@ -915,7 +927,7 @@ function changeEpisode(episode) {
   if (is_started == false) {
     firstStart();
   }
-  playPause("play");
+  playPauseHand("play");
 }
 
 function getEpisodeRequest() {
