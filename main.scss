@@ -1,5 +1,6 @@
 :root {
   --main: #f5004f;
+  --mainHover: rgb(233, 0, 74);
 }
 @font-face {
   font-family: bold;
@@ -573,6 +574,140 @@ body {
     font-size: 12px;
     background-color: rgb(22, 22, 22);
   }
+}
+
+.mg_player_eps {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 5;
+  .mg_player_eps_container {
+    display: flex;
+    align-items: flex-start;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 5;
+    height: 250px;
+    width: 220px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    .mg_player_eps_scroll {
+      height: 100%;
+      overflow-y: auto;
+      flex: 1;
+      .mg_ep_button {
+        background-color: rgba(0, 0, 0, 0.15);
+        outline: none;
+        border: none;
+        height: 38px;
+        width: 100%;
+        text-align: start;
+        padding-left: 15px;
+        color: rgba(255, 255, 255, 0.9);
+        letter-spacing: 0.5px;
+        font-size: 13px;
+        font-family: SemiBold;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+        transition: background-color 0.1s;
+        cursor: pointer;
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.35);
+        }
+      }
+      .mg_ep_button_active {
+        background-color: var(--main);
+        &:hover {
+          background-color: var(--mainHover);
+        }
+      }
+    }
+    .mg_player_seasons_scroll {
+      height: 100%;
+      width: 60px;
+      min-width: 60px;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      overflow-y: auto;
+      flex-direction: column;
+      gap: 5px;
+      .mg_eps_closer {
+        width: 100%;
+        height: 40px;
+        min-height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        svg {
+          height: 25px;
+        }
+      }
+      .mg_player_seasons {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .mg_se_button {
+        background-color: rgba(255, 255, 255, 0.05);
+        outline: none;
+        border: none;
+        height: 38px;
+        aspect-ratio: 1/ 1;
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        font-family: Bold;
+        transition: background-color 0.1s;
+        cursor: pointer;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+      .mg_se_button_active {
+        background-color: var(--main);
+        &:hover {
+          background-color: var(--mainHover);
+        }
+      }
+    }
+  }
+
+  .mg_player_ep_button {
+    display: none;
+    outline: none;
+    border: none;
+    height: 32px;
+    width: 130px;
+    border-radius: 6px;
+    background-color: var(--main);
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 1px;
+    font-family: Bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    &:hover {
+      background-color: var(--mainHover);
+    }
+  }
+}
+.mg_player_eps_scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.mg_player_eps_scroll::-webkit-scrollbar-thumb {
+  background-color: var(--main);
+}
+.mg_player_seasons_scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.mg_player_seasons_scroll::-webkit-scrollbar-thumb {
+  background-color: var(--main);
 }
 @media (max-width: 900px) {
   .mg_skip_left,
