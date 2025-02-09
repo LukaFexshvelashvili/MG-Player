@@ -664,6 +664,8 @@ body {
   flex: 1;
 }
 .mg_player_eps .mg_player_eps_container .mg_player_eps_scroll .mg_ep_button {
+  display: flex;
+  align-items: center;
   background-color: rgba(0, 0, 0, 0.15);
   outline: none;
   border: none;
@@ -719,6 +721,9 @@ body {
   gap: 8px;
 }
 .mg_player_eps .mg_player_eps_container .mg_player_seasons_scroll .mg_se_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: rgba(255, 255, 255, 0.05);
   outline: none;
   border: none;
