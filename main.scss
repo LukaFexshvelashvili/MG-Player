@@ -705,6 +705,10 @@ body {
   }
 
   .mg_player_ep_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     outline: none;
     border: none;
     height: 32px;
