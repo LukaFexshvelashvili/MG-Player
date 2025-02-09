@@ -68,10 +68,8 @@ let mg_main_controls;
 if (localStorage.getItem("mg_player_controls")) {
   mg_main_controls = JSON.parse(localStorage.getItem("mg_player_controls"));
 } else {
-  mg_main_controls = { lang: "DEF", volume: 1, speed: 1, quality: "DEF" };
-  JSON.parse(
-    localStorage.setItem("mg_player_controls", JSON.stringify(mg_main_controls))
-  );
+  mg_main_controls = { lang: "GEO", volume: 1, speed: 1, quality: "HD" };
+  localStorage.setItem("mg_player_controls", JSON.stringify(mg_main_controls));
 }
 
 let stoppedmove = false;
@@ -112,15 +110,17 @@ function initializePlayer() {
     );
   }
 
-  for (const [quality, item] of Object.entries(MG_PLAYER.quality)) {
+  for (const [quality] of Object.entries(
+    MG_PLAYER.languages[mg_main_controls.lang]
+  )) {
     mg_qualities.innerHTML += `<div class='mg_button${
-      item.def ? " mg_button_active" : ""
+      mg_main_controls.quality == quality ? " mg_button_active" : ""
     }'>${quality}</div>`;
   }
 
   for (const [language, item] of Object.entries(MG_PLAYER.languages)) {
     mg_languages.innerHTML += `<div class='mg_button${
-      item.def ? " mg_button_active" : ""
+      mg_main_controls.lang == language ? " mg_button_active" : ""
     }'>${language}</div>`;
   }
 }
@@ -258,7 +258,7 @@ mg_qualitiesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.paused;
-    mg_video.src = MG_PLAYER.quality[item.innerText].src;
+    mg_video.src = MG_PLAYER.languages[mg_main_controls.lang][item.innerText];
     saveControls({ quality: item.innerText });
 
     mg_video.currentTime = saveTime;
@@ -275,7 +275,8 @@ mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.isPaused;
-    mg_video.src = MG_PLAYER.languages[item.innerText].src;
+    mg_video.src =
+      MG_PLAYER.languages[item.innerText][mg_main_controls.quality];
     saveControls({ lang: item.innerText });
     mg_video.currentTime = saveTime;
     if (saveState == false) {
@@ -644,25 +645,37 @@ function getSavedTime() {
 }
 
 function getCheckOfControls() {
-  if (mg_main_controls.quality == "HD" && MG_PLAYER.quality.HD.src) {
-    mg_video.src = MG_PLAYER.quality.HD.src;
-    mg_helper_video.src = MG_PLAYER.quality.HD.src;
-  } else if (mg_main_controls.lang == "SD" && MG_PLAYER.quality.SD.src) {
-    mg_video.src = MG_PLAYER.quality.SD.src;
-    mg_helper_video.src = MG_PLAYER.quality.SD.src;
+  let chosedLang = mg_main_controls.lang == "ENG" ? "ENG" : "GEO";
+  let chosedQuality = mg_main_controls.quality == "SD" ? "SD" : "HD";
+  if (
+    mg_main_controls.lang == "GEO" &&
+    MG_PLAYER.languages.GEO[chosedQuality]
+  ) {
+    mg_video.src = MG_PLAYER.languages.GEO[chosedQuality];
+    mg_helper_video.src = MG_PLAYER.languages.GEO[chosedQuality];
+  } else if (
+    mg_main_controls.lang == "ENG" &&
+    MG_PLAYER.languages.ENG[chosedQuality]
+  ) {
+    chosedLang = "ENG";
+    mg_video.src = MG_PLAYER.languages.ENG[chosedQuality];
+    mg_helper_video.src = MG_PLAYER.languages.ENG[chosedQuality];
   } else {
-    mg_video.src = MG_PLAYER.src;
-    mg_helper_video.src = MG_PLAYER.src;
+    mg_video.src = MG_PLAYER.languages.GEO[chosedQuality];
+    mg_helper_video.src = MG_PLAYER.languages.GEO[chosedQuality];
   }
-  if (mg_main_controls.lang == "GEO" && MG_PLAYER.languages.GEO.src) {
-    mg_video.src = MG_PLAYER.languages.GEO.src;
-    mg_helper_video.src = MG_PLAYER.languages.GEO.src;
-  } else if (mg_main_controls.lang == "ENG" && MG_PLAYER.languages.ENG.src) {
-    mg_video.src = MG_PLAYER.languages.ENG.src;
-    mg_helper_video.src = MG_PLAYER.languages.ENG.src;
+  if (mg_main_controls.quality == "HD" && MG_PLAYER.languages[chosedLang].HD) {
+    mg_video.src = MG_PLAYER.languages[chosedLang].HD;
+    mg_helper_video.src = MG_PLAYER.languages[chosedLang].HD;
+  } else if (
+    mg_main_controls.lang == "SD" &&
+    MG_PLAYER.languages[chosedLang].SD
+  ) {
+    mg_video.src = MG_PLAYER.languages[chosedLang].SD;
+    mg_helper_video.src = MG_PLAYER.languages[chosedLang].SD;
   } else {
-    mg_video.src = MG_PLAYER.src;
-    mg_helper_video.src = MG_PLAYER.src;
+    mg_video.src = MG_PLAYER.languages[chosedLang].HD;
+    mg_helper_video.src = MG_PLAYER.languages[chosedLang].HD;
   }
 
   mg_speed_button.forEach((item) => {
