@@ -832,11 +832,11 @@ initialiseEpisodes();
 function printSeasons() {
   mg_player_seasons.innerHTML = "";
   for (const [season] of Object.entries(MG_PLAYER.seasons)) {
-    mg_player_seasons.innerHTML += `<button data-season="${season}" class="mg_se_button ${
+    mg_player_seasons.innerHTML += `<div data-season="${season}" class="mg_se_button ${
       active_season == season ? "mg_se_button_active" : ""
     } ">
     ${season}
-  </button>`;
+  </div>`;
   }
   let mg_ses_childrens = Array.from(mg_player_seasons.children);
   mg_ses_childrens.forEach((item) => {
@@ -855,13 +855,13 @@ function printEpisodes() {
   mg_player_eps_scroll.innerHTML = "";
   MG_PLAYER.seasons[active_season].forEach((item, index) => {
     index += 1;
-    mg_player_eps_scroll.innerHTML += `<button data-ep="${index}" class="mg_ep_button ${
+    mg_player_eps_scroll.innerHTML += `<div data-ep="${index}" class="mg_ep_button ${
       active_episode == index && curSE == active_season
         ? "mg_ep_button_active"
         : ""
     } ">
       ${index} ეპიზოდი
-      </button>`;
+      </div>`;
   });
   let mg_eps_childrens = Array.from(mg_player_eps_scroll.children);
   mg_eps_childrens.forEach((item) => {
