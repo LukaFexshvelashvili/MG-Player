@@ -3,6 +3,15 @@
   --mainHover: rgb(233, 0, 74);
 }
 
+input,
+textarea,
+button,
+select,
+div,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @font-face {
   font-family: bold;
   src: url("./assets/OnService-Bold.ttf");
