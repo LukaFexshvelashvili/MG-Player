@@ -644,7 +644,7 @@ mg_qualitiesChildrens.forEach((item) => {
 mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
-    var saveState = mg_video.isPaused;
+    var saveState = mg_video.paused;
     InitializeVideo(
       MG_PLAYER.languages[item.innerText][mg_main_controls.quality]
     );

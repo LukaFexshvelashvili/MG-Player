@@ -528,7 +528,7 @@ mg_qualitiesChildrens.forEach((e) => {
   mg_languagesChildrens.forEach((e) => {
     e.addEventListener("click", () => {
       var n = mg_video.currentTime,
-        t = mg_video.isPaused;
+        t = mg_video.paused;
       InitializeVideo(
         MG_PLAYER.languages[e.innerText][mg_main_controls.quality]
       ),
