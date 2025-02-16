@@ -75,6 +75,27 @@ const mg_eps_closer = document.querySelector(".mg_eps_closer");
 let active_season = null;
 let active_episode = null;
 
+function InitializeVideo(videoUrl) {
+  if (videoUrl.includes(".m3u8")) {
+    if (Hls.isSupported()) {
+      var hls = new Hls();
+      hls.loadSource(videoUrl);
+      hls.attachMedia(mg_video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {});
+      hls.on(Hls.Events.ERROR, function () {
+        mg_error_block.classList.remove("mg_error_block_hidden");
+      });
+    } else if (mg_video.canPlayType("application/vnd.apple.mpegurl")) {
+      mg_video.src = videoUrl;
+    } else {
+      mg_error_block.classList.remove("mg_error_block_hidden");
+    }
+  } else {
+    mg_video.src = videoUrl;
+  }
+}
+
 let mg_main_controls;
 
 if (localStorage.getItem("mg_player_controls")) {
@@ -112,19 +133,54 @@ function initializePlayer() {
         mg_save.findIndex((item) => item.id == get_cur[0].id)
       );
       if (MG_PLAYER.seasons) {
-        active_season = get_cur[0].season;
-        active_episode = get_cur[0].episode;
-        changeInitialEpisode(getEpisodeRequest());
+        if (
+          get_cur[0].season <= Object.keys(MG_PLAYER.seasons).length &&
+          get_cur[0].episode <= MG_PLAYER.seasons[get_cur[0].season].length
+        ) {
+          active_season = get_cur[0].season;
+          active_episode = get_cur[0].episode;
+
+          // SCROLL ON ACTIVE EP AND SEASON
+          setTimeout(() => {
+            const seasonElement = mg_player_seasons.querySelector(
+              `[data-season="${get_cur[0]?.season}"]`
+            );
+            const episodeElement = mg_player_eps_scroll.querySelector(
+              `[data-ep="${get_cur[0]?.episode}"]`
+            );
+
+            if (seasonElement && mg_player_seasons) {
+              mg_player_seasons.scrollTop =
+                seasonElement.offsetTop - mg_player_seasons.offsetTop - 100;
+            }
+
+            if (episodeElement && mg_player_eps_scroll) {
+              mg_player_eps_scroll.scrollTop =
+                episodeElement.offsetTop - mg_player_eps_scroll.offsetTop - 100;
+            }
+          }, 0);
+
+          changeInitialEpisode(getEpisodeRequest());
+        } else {
+          active_season = 1;
+          active_episode = 1;
+
+          mg_save[0].id = MG_PLAYER.id;
+          mg_save[0].time = 0;
+          mg_save[0].episode = 1;
+          mg_save[0].season = 1;
+          localStorage.setItem("mg_player", JSON.stringify(mg_save));
+        }
       }
-      cutIfTooLarge(mg_save, 2);
+      cutIfTooLarge(mg_save, 5);
       localStorage.setItem("mg_player", JSON.stringify(mg_save));
     } else {
       if (MG_PLAYER.seasons) {
         mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
       } else {
-        mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 });
+        mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
       }
-      cutIfTooLarge(mg_save, 2);
+      cutIfTooLarge(mg_save, 5);
       localStorage.setItem("mg_player", JSON.stringify(mg_save));
     }
   } else {
@@ -136,7 +192,7 @@ function initializePlayer() {
     } else {
       localStorage.setItem(
         "mg_player",
-        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 }])
+        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
       );
     }
   }
@@ -306,7 +362,9 @@ mg_qualitiesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.paused;
-    mg_video.src = MG_PLAYER.languages[mg_main_controls.lang][item.innerText];
+    mg_video.src = InitializeVideo(
+      MG_PLAYER.languages[mg_main_controls.lang][item.innerText]
+    );
     saveControls({ quality: item.innerText });
 
     mg_video.currentTime = saveTime.toFixed(6);
@@ -323,8 +381,9 @@ mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.isPaused;
-    mg_video.src =
-      MG_PLAYER.languages[item.innerText][mg_main_controls.quality];
+    mg_video.src = InitializeVideo(
+      MG_PLAYER.languages[item.innerText][mg_main_controls.quality]
+    );
     saveControls({ lang: item.innerText });
     mg_video.currentTime = saveTime.toFixed(6);
     if (saveState == false) {
@@ -718,31 +777,37 @@ function getCheckOfControls() {
     mg_main_controls.lang == "GEO" &&
     MG_PLAYER.languages.GEO[chosedQuality]
   ) {
-    mg_video.src = MG_PLAYER.languages.GEO[chosedQuality];
-    mg_helper_video.src = MG_PLAYER.languages.GEO[chosedQuality];
+    mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
+    mg_helper_video.src = InitializeVideo(
+      MG_PLAYER.languages.GEO[chosedQuality]
+    );
   } else if (
     mg_main_controls.lang == "ENG" &&
     MG_PLAYER.languages.ENG[chosedQuality]
   ) {
     chosedLang = "ENG";
-    mg_video.src = MG_PLAYER.languages.ENG[chosedQuality];
-    mg_helper_video.src = MG_PLAYER.languages.ENG[chosedQuality];
+    mg_video.src = InitializeVideo(MG_PLAYER.languages.ENG[chosedQuality]);
+    mg_helper_video.src = InitializeVideo(
+      MG_PLAYER.languages.ENG[chosedQuality]
+    );
   } else {
-    mg_video.src = MG_PLAYER.languages.GEO[chosedQuality];
-    mg_helper_video.src = MG_PLAYER.languages.GEO[chosedQuality];
+    mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
+    mg_helper_video.src = InitializeVideo(
+      MG_PLAYER.languages.GEO[chosedQuality]
+    );
   }
   if (mg_main_controls.quality == "HD" && MG_PLAYER.languages[chosedLang].HD) {
-    mg_video.src = MG_PLAYER.languages[chosedLang].HD;
-    mg_helper_video.src = MG_PLAYER.languages[chosedLang].HD;
+    mg_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
+    mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
   } else if (
     mg_main_controls.lang == "SD" &&
     MG_PLAYER.languages[chosedLang].SD
   ) {
-    mg_video.src = MG_PLAYER.languages[chosedLang].SD;
-    mg_helper_video.src = MG_PLAYER.languages[chosedLang].SD;
+    mg_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
+    mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
   } else {
-    mg_video.src = MG_PLAYER.languages[chosedLang].HD;
-    mg_helper_video.src = MG_PLAYER.languages[chosedLang].HD;
+    mg_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
+    mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
   }
 
   mg_speed_button.forEach((item) => {
@@ -906,13 +971,13 @@ function initializePlayerSeries() {
   }
 }
 function changeInitialEpisode(episode) {
-  mg_video.src = episode;
-  mg_helper_video.src = episode;
+  mg_video.src = InitializeVideo(episode);
+  mg_helper_video.src = InitializeVideo(episode);
 }
 
 function changeEpisode(episode) {
-  mg_video.src = episode;
-  mg_helper_video.src = episode;
+  mg_video.src = InitializeVideo(episode);
+  mg_helper_video.src = InitializeVideo(episode);
   mg_video.currentTime = 0;
   mg_helper_video.currentTime = 0;
   if (localStorage.getItem("mg_player")) {
@@ -952,11 +1017,7 @@ function getEpisodeRequest() {
       )[0];
 }
 function getEpisodesObjectRequest() {
-  return MG_PLAYER.seasons[active_season][active_episode - 1].languages
-    ? MG_PLAYER.seasons[active_season][active_episode - 1].languages
-      ? MG_PLAYER.seasons[active_season][active_episode - 1].languages
-      : MG_PLAYER.seasons[active_season][active_episode - 1].languages
-    : MG_PLAYER.seasons[active_season][active_episode - 1].languages;
+  return MG_PLAYER.seasons[active_season][active_episode - 1].languages;
 }
 
 function getCurStorage() {

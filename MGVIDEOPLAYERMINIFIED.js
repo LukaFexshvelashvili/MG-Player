@@ -47,6 +47,22 @@ const mg_player = document.querySelector(".mg_player"),
 let mg_main_controls,
   active_season = null,
   active_episode = null;
+function InitializeVideo(e) {
+  if (e.includes(".m3u8"))
+    if (Hls.isSupported()) {
+      var t = new Hls();
+      t.loadSource(e),
+        t.attachMedia(mg_video),
+        t.on(Hls.Events.MANIFEST_PARSED, function () {}),
+        t.on(Hls.Events.ERROR, function () {
+          mg_error_block.classList.remove("mg_error_block_hidden");
+        });
+    } else
+      mg_video.canPlayType("application/vnd.apple.mpegurl")
+        ? (mg_video.src = e)
+        : mg_error_block.classList.remove("mg_error_block_hidden");
+  else mg_video.src = e;
+}
 localStorage.getItem("mg_player_controls")
   ? (mg_main_controls = JSON.parse(localStorage.getItem("mg_player_controls")))
   : ((mg_main_controls = { lang: "GEO", volume: 1, speed: 1, quality: "HD" }),
@@ -68,33 +84,53 @@ function initializePlayer() {
   ) {
     let e = localStorage.getItem("mg_player"),
       t = JSON.parse(e),
-      n = t.filter((e) => e.id == MG_PLAYER.id);
-    0 !== n.length
+      i = t.filter((e) => e.id == MG_PLAYER.id);
+    0 !== i.length
       ? (movetoFirstItem(
           t,
-          t.findIndex((e) => e.id == n[0].id)
+          t.findIndex((e) => e.id == i[0].id)
         ),
         MG_PLAYER.seasons &&
-          ((active_season = n[0].season),
-          (active_episode = n[0].episode),
-          changeInitialEpisode(getEpisodeRequest())),
-        cutIfTooLarge(t, 2),
+          (i[0].season <= Object.keys(MG_PLAYER.seasons).length &&
+          i[0].episode <= MG_PLAYER.seasons[i[0].season].length
+            ? ((active_season = i[0].season),
+              (active_episode = i[0].episode),
+              setTimeout(() => {
+                const e = mg_player_seasons.querySelector(
+                    `[data-season="${i[0]?.season}"]`
+                  ),
+                  t = mg_player_eps_scroll.querySelector(
+                    `[data-ep="${i[0]?.episode}"]`
+                  );
+                e &&
+                  mg_player_seasons &&
+                  (mg_player_seasons.scrollTop =
+                    e.offsetTop - mg_player_seasons.offsetTop - 100),
+                  t &&
+                    mg_player_eps_scroll &&
+                    (mg_player_eps_scroll.scrollTop =
+                      t.offsetTop - mg_player_eps_scroll.offsetTop - 100);
+              }, 0),
+              changeInitialEpisode(getEpisodeRequest()))
+            : ((active_season = 1),
+              (active_episode = 1),
+              (t[0].id = MG_PLAYER.id),
+              (t[0].time = 0),
+              (t[0].episode = 1),
+              (t[0].season = 1),
+              localStorage.setItem("mg_player", JSON.stringify(t)))),
+        cutIfTooLarge(t, 5),
         localStorage.setItem("mg_player", JSON.stringify(t)))
-      : (MG_PLAYER.seasons
-          ? t.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 })
-          : t.unshift({ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 }),
-        cutIfTooLarge(t, 2),
+      : (MG_PLAYER.seasons,
+        t.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }),
+        cutIfTooLarge(t, 5),
         localStorage.setItem("mg_player", JSON.stringify(t)));
   } else
-    MG_PLAYER.seasons
-      ? localStorage.setItem(
-          "mg_player",
-          JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
-        )
-      : localStorage.setItem(
-          "mg_player",
-          JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 0, season: 0 }])
-        );
+    MG_PLAYER.seasons,
+      localStorage.setItem(
+        "mg_player",
+        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
+      );
   for (const [e] of Object.entries(MG_PLAYER.languages[mg_main_controls.lang]))
     mg_qualities.innerHTML += `<div class='mg_button${
       mg_main_controls.quality == e ? " mg_button_active" : ""
@@ -199,19 +235,19 @@ function onDraging(e) {
 function onDragingTouch(e) {
   const t = e.touches[0];
   if (isDragging) {
-    var n =
+    var i =
       (100 / mg_timeline_scaler.offsetWidth) *
       (t.clientX - mg_timeline_scaler.getBoundingClientRect().left);
-    mg_time_indicator.style.width = n + "%";
+    mg_time_indicator.style.width = i + "%";
   }
 }
 function contextClick(e) {
   e.preventDefault();
   const t = e.offsetX,
-    n = e.offsetY;
+    i = e.offsetY;
   clearTimeout(sTimer),
     (mg_context_menu.style.left = `${t}px`),
-    (mg_context_menu.style.top = `${n}px`),
+    (mg_context_menu.style.top = `${i}px`),
     (mg_context_menu.style.display = "flex"),
     (sTimer = setTimeout(() => {
       mg_context_menu.style.display = "none";
@@ -334,10 +370,10 @@ function seeTime(e) {
       (mg_timeline_helper.style.transform = `translateX(${
         e.offsetX - mg_timeline_helper.offsetWidth / 2
       }px)`);
-    var n = percentageToTime(t);
-    n &&
-      ((mg_timeline_helper_time.innerHTML = formatTime(n)),
-      (mg_helper_video.currentTime = n.toFixed(6)),
+    var i = percentageToTime(t);
+    i &&
+      ((mg_timeline_helper_time.innerHTML = formatTime(i)),
+      (mg_helper_video.currentTime = i.toFixed(6)),
       (mg_time_indicator_helper.style.width = t + "%"));
   }
 }
@@ -353,9 +389,9 @@ function seeTimeTouch(e) {
         mg_timeline_scaler.getBoundingClientRect().left -
         mg_timeline_helper.offsetWidth / 2
       }px)`);
-    const n = percentageToTime(e);
-    (mg_timeline_helper_time.innerHTML = formatTime(n)),
-      (mg_helper_video.currentTime = n.toFixed(6)),
+    const i = percentageToTime(e);
+    (mg_timeline_helper_time.innerHTML = formatTime(i)),
+      (mg_helper_video.currentTime = i.toFixed(6)),
       (mg_time_indicator_helper.style.width = e + "%");
   }
 }
@@ -461,11 +497,11 @@ function firstStart() {
 }
 function formatTime(e) {
   const t = Math.floor(e / 3600),
-    n = Math.floor((e % 3600) / 60),
-    i = Math.floor(e % 60);
+    i = Math.floor((e % 3600) / 60),
+    n = Math.floor(e % 60);
   return t > 0
-    ? `${t}:${String(n).padStart(2, "0")}:${String(i).padStart(2, "0")}`
-    : `${n}:${String(i).padStart(2, "0")}`;
+    ? `${t}:${String(i).padStart(2, "0")}:${String(n).padStart(2, "0")}`
+    : `${i}:${String(n).padStart(2, "0")}`;
 }
 function percentageToTime(e) {
   return mg_video.duration ? (mg_video.duration / 100) * e : null;
@@ -473,11 +509,13 @@ function percentageToTime(e) {
 mg_qualitiesChildrens.forEach((e) => {
   e.addEventListener("click", () => {
     var t = mg_video.currentTime,
-      n = mg_video.paused;
-    (mg_video.src = MG_PLAYER.languages[mg_main_controls.lang][e.innerText]),
+      i = mg_video.paused;
+    (mg_video.src = InitializeVideo(
+      MG_PLAYER.languages[mg_main_controls.lang][e.innerText]
+    )),
       saveControls({ quality: e.innerText }),
       (mg_video.currentTime = t.toFixed(6)),
-      0 == n && mg_video.play(),
+      0 == i && mg_video.play(),
       mg_qualitiesChildrens.forEach((e) =>
         e.classList.remove("mg_button_active")
       ),
@@ -487,12 +525,13 @@ mg_qualitiesChildrens.forEach((e) => {
   mg_languagesChildrens.forEach((e) => {
     e.addEventListener("click", () => {
       var t = mg_video.currentTime,
-        n = mg_video.isPaused;
-      (mg_video.src =
-        MG_PLAYER.languages[e.innerText][mg_main_controls.quality]),
+        i = mg_video.isPaused;
+      (mg_video.src = InitializeVideo(
+        MG_PLAYER.languages[e.innerText][mg_main_controls.quality]
+      )),
         saveControls({ lang: e.innerText }),
         (mg_video.currentTime = t.toFixed(6)),
-        0 == n && mg_video.play(),
+        0 == i && mg_video.play(),
         mg_languagesChildrens.forEach((e) =>
           e.classList.remove("mg_button_active")
         ),
@@ -519,44 +558,44 @@ function dbClick(e) {
 }
 function movetoFirstItem(e, t) {
   if (t < 0 || t >= e.length) return e;
-  const n = e.splice(t, 1)[0];
-  return e.splice(0, 0, n), e;
+  const i = e.splice(t, 1)[0];
+  return e.splice(0, 0, i), e;
 }
 function cutIfTooLarge(e, t) {
   e.length > t && e.splice(t);
 }
 function replaceTimeline(e) {
   let t = localStorage.getItem("mg_player"),
-    n = JSON.parse(t),
-    i = n.findIndex((e) => e.id == MG_PLAYER.id);
-  (n[i].time = e), localStorage.setItem("mg_player", JSON.stringify(n));
+    i = JSON.parse(t),
+    n = i.findIndex((e) => e.id == MG_PLAYER.id);
+  (i[n].time = e), localStorage.setItem("mg_player", JSON.stringify(i));
 }
 function getSavedTime() {
   let e = localStorage.getItem("mg_player"),
     t = JSON.parse(e),
-    n = t.findIndex((e) => e.id == MG_PLAYER.id);
-  return -1 !== n ? t[n].time : 0;
+    i = t.findIndex((e) => e.id == MG_PLAYER.id);
+  return -1 !== i ? t[i].time : 0;
 }
 function getCheckOfControls() {
   let e = "ENG" == mg_main_controls.lang ? "ENG" : "GEO",
     t = "SD" == mg_main_controls.quality ? "SD" : "HD";
   "GEO" == mg_main_controls.lang && MG_PLAYER.languages.GEO[t]
-    ? ((mg_video.src = MG_PLAYER.languages.GEO[t]),
-      (mg_helper_video.src = MG_PLAYER.languages.GEO[t]))
+    ? ((mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t])),
+      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t])))
     : "ENG" == mg_main_controls.lang && MG_PLAYER.languages.ENG[t]
     ? ((e = "ENG"),
-      (mg_video.src = MG_PLAYER.languages.ENG[t]),
-      (mg_helper_video.src = MG_PLAYER.languages.ENG[t]))
-    : ((mg_video.src = MG_PLAYER.languages.GEO[t]),
-      (mg_helper_video.src = MG_PLAYER.languages.GEO[t])),
+      (mg_video.src = InitializeVideo(MG_PLAYER.languages.ENG[t])),
+      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.ENG[t])))
+    : ((mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t])),
+      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t]))),
     "HD" == mg_main_controls.quality && MG_PLAYER.languages[e].HD
-      ? ((mg_video.src = MG_PLAYER.languages[e].HD),
-        (mg_helper_video.src = MG_PLAYER.languages[e].HD))
+      ? ((mg_video.src = InitializeVideo(MG_PLAYER.languages[e].HD)),
+        (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[e].HD)))
       : "SD" == mg_main_controls.lang && MG_PLAYER.languages[e].SD
-      ? ((mg_video.src = MG_PLAYER.languages[e].SD),
-        (mg_helper_video.src = MG_PLAYER.languages[e].SD))
-      : ((mg_video.src = MG_PLAYER.languages[e].HD),
-        (mg_helper_video.src = MG_PLAYER.languages[e].HD)),
+      ? ((mg_video.src = InitializeVideo(MG_PLAYER.languages[e].SD)),
+        (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[e].SD)))
+      : ((mg_video.src = InitializeVideo(MG_PLAYER.languages[e].HD)),
+        (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[e].HD))),
     mg_speed_button.forEach((e) => {
       e.innerHTML.trim() == mg_main_controls.speed &&
         ((mg_video.playbackRate = e.innerHTML.trim()),
@@ -565,14 +604,14 @@ function getCheckOfControls() {
     }),
     measureSoundHand(mg_main_controls.volume);
 }
-function saveControls({ lang: e, volume: t, speed: n, quality: i }) {
+function saveControls({ lang: e, volume: t, speed: i, quality: n }) {
   if (localStorage.getItem("mg_player_controls")) {
     let o = localStorage.getItem("mg_player_controls"),
       s = JSON.parse(o);
     (s.lang = e ?? s.lang),
       (s.volume = t ?? s.volume),
-      (s.speed = n ?? s.speed),
-      (s.quality = i ?? s.quality),
+      (s.speed = i ?? s.speed),
+      (s.quality = n ?? s.quality),
       localStorage.setItem("mg_player_controls", JSON.stringify(s));
   }
 }
@@ -641,11 +680,11 @@ function printSeasons() {
 function printEpisodes() {
   const e = getCurStorage().season;
   (mg_player_eps_scroll.innerHTML = ""),
-    MG_PLAYER.seasons[active_season].forEach((t, n) => {
-      (n += 1),
-        (mg_player_eps_scroll.innerHTML += `<div data-ep="${n}" class="mg_ep_button ${
-          active_episode == n && e == active_season ? "mg_ep_button_active" : ""
-        } ">\n      ${n} ეპიზოდი\n      </div>`);
+    MG_PLAYER.seasons[active_season].forEach((t, i) => {
+      (i += 1),
+        (mg_player_eps_scroll.innerHTML += `<div data-ep="${i}" class="mg_ep_button ${
+          active_episode == i && e == active_season ? "mg_ep_button_active" : ""
+        } ">\n      ${i} ეპიზოდი\n      </div>`);
     });
   let t = Array.from(mg_player_eps_scroll.children);
   t.forEach((e) => {
@@ -670,12 +709,13 @@ function initializePlayerSeries() {
     }'>${e}</div>`;
 }
 function changeInitialEpisode(e) {
-  (mg_video.src = e), (mg_helper_video.src = e);
+  (mg_video.src = InitializeVideo(e)),
+    (mg_helper_video.src = InitializeVideo(e));
 }
 function changeEpisode(e) {
   if (
-    ((mg_video.src = e),
-    (mg_helper_video.src = e),
+    ((mg_video.src = InitializeVideo(e)),
+    (mg_helper_video.src = InitializeVideo(e)),
     (mg_video.currentTime = 0),
     (mg_helper_video.currentTime = 0),
     localStorage.getItem("mg_player"))
@@ -713,10 +753,7 @@ function getEpisodeRequest() {
       )[0];
 }
 function getEpisodesObjectRequest() {
-  return MG_PLAYER.seasons[active_season][active_episode - 1].languages
-    ? (MG_PLAYER.seasons[active_season][active_episode - 1].languages,
-      MG_PLAYER.seasons[active_season][active_episode - 1].languages)
-    : MG_PLAYER.seasons[active_season][active_episode - 1].languages;
+  return MG_PLAYER.seasons[active_season][active_episode - 1].languages;
 }
 function getCurStorage() {
   if (localStorage.getItem("mg_player")) {

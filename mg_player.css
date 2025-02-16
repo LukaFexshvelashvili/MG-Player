@@ -70,7 +70,7 @@ body {
   position: relative;
   height: 400px;
   aspect-ratio: 16/9;
-  border-radius: 15px;
+  border-radius: 10px;
   background-color: black;
   overflow: hidden;
 }
@@ -239,12 +239,24 @@ body {
   cursor: pointer;
   z-index: 4;
 }
-.mg_main_play svg {
-  height: 65px;
-  width: 65px;
+.mg_main_play .mg_play_icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
 }
-.mg_main_play path {
-  fill: var(--main);
+.mg_main_play .mg_play_icon svg {
+  height: 30px;
+  aspect-ratio: 1/1;
+  transform: translateX(2px);
+}
+.mg_main_play .mg_play_icon svg path {
+  fill: rgba(255, 255, 255, 0.9);
 }
 .mg_main_play img {
   position: absolute;
@@ -866,4 +878,4 @@ body {
   #mg_fullscreen_off_ {
     height: 20px;
   }
-}/*# sourceMappingURL=main.css.map */
+}/*# sourceMappingURL=mg_player.css.map */
