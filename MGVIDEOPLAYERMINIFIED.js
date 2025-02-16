@@ -1,5 +1,7 @@
-const mg_player = document.querySelector(".mg_player"),
-  mg_error_block = document.querySelector(".mg_error_block"),
+const mg_player = document.querySelector(".mg_player");
+mg_player.innerHTML =
+  ' <div class="mg_player_eps mg_player_eps_hidden">\n        <div class="mg_player_ep_button">ეპიზოდები</div>\n        <div class="mg_player_eps_container">\n          <div class="mg_player_eps_scroll"></div>\n          <div class="mg_player_seasons_scroll">\n            <div class="mg_eps_closer">\n              <svg\n                viewBox="0 0 23 23"\n                fill="none"\n                xmlns="http://www.w3.org/2000/svg"\n              >\n                <path\n                  d="M13.0246 11.5L17.2921 7.2324C17.4947 7.03022 17.6086 6.75586 17.6089 6.46968C17.6091 6.1835 17.4957 5.90894 17.2935 5.7064C17.0913 5.50387 16.817 5.38994 16.5308 5.38969C16.2446 5.38943 15.97 5.50288 15.7675 5.70506L11.4999 9.97263L7.23234 5.70506C7.0298 5.50252 6.7551 5.38873 6.46867 5.38873C6.18223 5.38873 5.90753 5.50252 5.705 5.70506C5.50246 5.90759 5.38867 6.1823 5.38867 6.46873C5.38867 6.75516 5.50246 7.02986 5.705 7.2324L9.97257 11.5L5.705 15.7676C5.50246 15.9701 5.38867 16.2448 5.38867 16.5312C5.38867 16.8177 5.50246 17.0924 5.705 17.2949C5.90753 17.4974 6.18223 17.6112 6.46867 17.6112C6.7551 17.6112 7.0298 17.4974 7.23234 17.2949L11.4999 13.0273L15.7675 17.2949C15.97 17.4974 16.2447 17.6112 16.5312 17.6112C16.8176 17.6112 17.0923 17.4974 17.2948 17.2949C17.4974 17.0924 17.6112 16.8177 17.6112 16.5312C17.6112 16.2448 17.4974 15.9701 17.2948 15.7676L13.0246 11.5Z"\n                  fill="white"\n                  fill-opacity="0.7"\n                />\n              </svg>\n            </div>\n            <div class="mg_player_seasons"></div>\n          </div>\n        </div>\n      </div>\n      <div class="mg_error_block mg_error_hidden">\n        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეერით</div>\n      </div>\n      <div class="mg_context_menu">MG PLAYER V3.0</div>\n      <div class="mg_loader mg_gtc mg_loader_hidden">\n        <div class="mg_loader_spinner"></div>\n      </div>\n      <video src="" class="mg_video"></video>\n      <div class="mg_main_play">\n        <img class="mg_video_thumbnail" src="./assets/thumbnail.png" />\n        <div class="mg_play_icon">\n          <svg\n            viewBox="0 0 14 16"\n            fill="none"\n            xmlns="http://www.w3.org/2000/svg"\n          >\n            <path\n              d="M13.4014 7.39629C13.5902 7.51463 13.7447 7.68071 13.8497 7.87794C13.9546 8.07517 14.0062 8.29664 13.9994 8.52023C13.9926 8.74381 13.9275 8.96168 13.8108 9.15207C13.694 9.34247 13.5297 9.49871 13.3341 9.6052L1.876 15.8459C1.68243 15.9513 1.46498 16.0043 1.24493 15.9997C1.02488 15.9952 0.809774 15.9333 0.62067 15.82C0.431566 15.7067 0.274948 15.546 0.166149 15.3536C0.0573496 15.1612 9.79929e-05 14.9436 0 14.7223V1.27831C-5.35092e-07 1.05013 0.0607289 0.8261 0.175884 0.629493C0.291038 0.432885 0.45642 0.270862 0.654859 0.160246C0.853298 0.049629 1.07756 -0.0055488 1.30436 0.000440518C1.53116 0.00642984 1.75224 0.0733681 1.94463 0.194306L13.4014 7.39629Z"\n              fill="white"\n              fill-opacity="0.9"\n            />\n          </svg>\n        </div>\n      </div>\n      <div class="mg_skip_left"></div>\n      <div class="mg_skip_right"></div>\n\n      <div class="mg_play_pause_full"></div>\n      <div class="mg_controls mg_controls_hidden">\n        <div class="mg_controls_shadow"></div>\n        <div class="mg_controls_bar">\n          <div class="mg_timeline_scaler">\n            <div class="mg_timeline_helper">\n              <video class="mg_helper_video" src="" muted></video>\n              <p class="mg_timeline_helper_time">00:00</p>\n            </div>\n            <div class="mg_timeline">\n              <div class="mg_time_indicator"></div>\n              <div class="mg_time_indicator_helper"></div>\n            </div>\n          </div>\n          <div class="mg_controls_row">\n            <div class="mg_first_row">\n              <div class="mg_play_pause mg_gtc">\n                <svg id="mg_play_" viewBox="0 0 16 16">\n                  <path fill="white" opacity="0.9" d="M2 1v14l12-7z" />\n                </svg>\n                <svg id="mg_pause_" viewBox="0 0 256 384">\n                  <path\n                    fill="white"\n                    opacity="0.9"\n                    d="M0 341V43h85v298H0zM171 43h85v298h-85V43z"\n                  />\n                </svg>\n              </div>\n              <div class="mg_sound">\n                <div class="mg_sound_mob"></div>\n                <div class="mg_sound_icon mg_gtc">\n                  <svg\n                    xmlns="http://www.w3.org/2000/svg"\n                    id="mg_sound_on_"\n                    viewBox="0 0 512 512"\n                  >\n                    <path\n                      fill="white"\n                      opacity="0.9"\n                      fill-rule="evenodd"\n                      d="m403.966 426.944l-33.285-26.63c74.193-81.075 74.193-205.015-.001-286.09l33.285-26.628c86.612 96.712 86.61 242.635.001 339.348M319.58 155.105l-33.324 26.659c39.795 42.568 39.794 108.444.001 151.012l33.324 26.658c52.205-58.22 52.205-146.109-.001-204.329m-85.163-69.772l-110.854 87.23H42.667v170.666h81.02l110.73 85.458z"\n                    />\n                  </svg>\n\n                  <svg id="mg_sound_off_" < viewBox="0 0 512 512">\n                    <path\n                      fill="white"\n                      opacity="0.9"\n                      fill-rule="evenodd"\n                      d="m403.375 257.27l59.584 59.584l-30.167 30.166l-59.583-59.583l-59.584 59.583l-30.166-30.166l59.583-59.584l-59.583-59.583l30.166-30.166l59.584 59.583l59.583-59.583l30.167 30.166zM234.417 85.333l-110.854 87.23H42.667v170.666h81.02l110.73 85.458z"\n                    />\n                  </svg>\n                </div>\n                <input\n                  type="range"\n                  id="mg_sound_slider"\n                  min="0"\n                  value="100"\n                  max="100"\n                />\n              </div>\n              <div class="mg_time">\n                <p class="mg_starttime">00:00</p>\n                /\n                <p class="mg_endtime">00:00</p>\n              </div>\n\n              <div class="mg_skip_left_button mg_mob_off">\n                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">\n                  <path\n                    fill="white"\n                    opacity="0.9"\n                    d="M4.5 4.252v3.422c2.95-3.16 7.172-4.737 11.518-4.672c5.942.088 10.698 3.268 13.784 8.074a1.25 1.25 0 1 1-2.104 1.35c-2.713-4.225-6.751-6.85-11.717-6.925c-4.013-.06-7.768 1.503-10.192 4.5H9.75a1.25 1.25 0 1 1 0 2.5h-6.5c-.69 0-1.25-.56-1.25-1.25v-7a1.25 1.25 0 0 1 2.5 0Zm7.986 10.847c.463.196.764.65.764 1.152V27.5a1.25 1.25 0 0 1-2.5 0v-8.47a23.25 23.25 0 0 1-1.607 1.043a1.25 1.25 0 0 1-1.286-2.144c1.046-.628 1.633-1.054 2.056-1.411c.31-.262.531-.483.81-.761c.12-.12.251-.252.405-.401a1.25 1.25 0 0 1 1.358-.257Zm4.463 2.2C17.787 15.882 19.18 15 21.1 15c1.923 0 3.314.88 4.152 2.298c.781 1.322 1.035 3.023 1.035 4.701c0 1.68-.254 3.38-1.035 4.702C24.414 28.12 23.022 29 21.1 29c-1.922 0-3.313-.88-4.15-2.298c-.782-1.322-1.036-3.023-1.036-4.702c0-1.678.254-3.38 1.035-4.701Zm2.152 1.272c-.448.759-.687 1.933-.687 3.43c0 1.496.239 2.67.687 3.43c.393.663.97 1.07 2 1.07s1.606-.407 1.999-1.07c.448-.76.687-1.934.687-3.43c0-1.497-.239-2.671-.687-3.43c-.393-.664-.97-1.07-2-1.07s-1.607.406-1.999 1.07Z"\n                  />\n                </svg>\n              </div>\n              <div class="mg_skip_right_button mg_mob_off">\n                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">\n                  <path\n                    fill="white"\n                    opacity="0.9"\n                    d="M16.019 5.501c4.013-.06 7.768 1.503 10.192 4.5H22.25a1.25 1.25 0 0 0 0 2.5h6.5c.69 0 1.25-.56 1.25-1.25v-7a1.25 1.25 0 0 0-2.5 0v3.423c-2.95-3.16-7.172-4.737-11.518-4.672C10.04 3.09 5.284 6.27 2.197 11.076a1.25 1.25 0 1 0 2.104 1.35c2.713-4.225 6.751-6.85 11.717-6.925Zm5.081 9.5c-1.922 0-3.313.88-4.15 2.298c-.782 1.322-1.036 3.023-1.036 4.701c0 1.68.254 3.38 1.035 4.702C17.787 28.12 19.18 29 21.1 29c1.923 0 3.314-.88 4.152-2.298c.781-1.322 1.035-3.023 1.035-4.702c0-1.678-.254-3.379-1.035-4.701c-.838-1.417-2.23-2.298-4.152-2.298Zm-2.686 7c0-1.497.239-2.671.687-3.43c.393-.664.97-1.07 2-1.07s1.606.406 1.999 1.07c.448.759.687 1.933.687 3.43c0 1.496-.239 2.67-.687 3.43c-.393.663-.97 1.07-2 1.07s-1.607-.407-1.999-1.07c-.448-.76-.687-1.934-.687-3.43Zm-5.164-5.75a1.25 1.25 0 0 0-2.122-.895c-.154.15-.285.28-.405.4c-.279.279-.5.5-.81.762c-.423.357-1.01.783-2.056 1.411a1.25 1.25 0 1 0 1.286 2.144a23.25 23.25 0 0 0 1.607-1.043v8.47a1.25 1.25 0 0 0 2.5 0V16.25Z"\n                  />\n                </svg>\n              </div>\n            </div>\n            <div class="mg_last_row">\n              <div class="mg_download mg_mob_off">\n                <svg\n                  width="16"\n                  height="14"\n                  viewBox="0 0 16 14"\n                  fill="none"\n                  xmlns="http://www.w3.org/2000/svg"\n                >\n                  <path\n                    d="M4.5 5.66667L8 9M8 9L11.5 5.66667M8 9V1M15 9V11.6667C15 12.0203 14.8525 12.3594 14.5899 12.6095C14.3274 12.8595 13.9713 13 13.6 13H2.4C2.0287 13 1.6726 12.8595 1.41005 12.6095C1.1475 12.3594 1 12.0203 1 11.6667V9"\n                    stroke="white"\n                    stroke-opacity="0.9"\n                    stroke-width="2"\n                    stroke-linecap="round"\n                    stroke-linejoin="round"\n                  />\n                </svg>\n              </div>\n              <div class="mg_frame mg_gtc">\n                <svg\n                  id="mg_frame_icon"\n                  xmlns="http://www.w3.org/2000/svg"\n                  width="20"\n                  height="20"\n                  viewBox="0 0 472 384"\n                >\n                  <path\n                    fill="white"\n                    opacity="0.9"\n                    d="M384 85v128H213V85h171zm43-85q17 0 29.5 12.5T469 43v298q0 18-12.5 30.5T427 384H43q-18 0-30.5-12.5T0 341V43q0-18 12.5-30.5T43 0h384zm0 342V42H43v300h384z"\n                  />\n                </svg>\n              </div>\n              <div class="mg_settings mg_gtc">\n                <div class="mg_settings_block mg_settings_hidden">\n                  <div class="mg_cols">\n                    <p>ხარისხი</p>\n                    <div class="mg_qualities"></div>\n                  </div>\n                  <div class="mg_cols">\n                    <p>ენა</p>\n                    <div class="mg_languages"></div>\n                  </div>\n                  <div class="mg_cols">\n                    <p>სისწრაფე</p>\n                    <div class="mg_button mg_speed_button">1.5</div>\n                    <div class="mg_button mg_speed_button">1.25</div>\n                    <div class="mg_button mg_speed_button mg_button_active">\n                      1\n                    </div>\n                    <div class="mg_button mg_speed_button">0.75</div>\n                    <div class="mg_button mg_speed_button">0.5</div>\n                  </div>\n                </div>\n                <svg\n                  id="mg_settings_toggler"\n                  viewBox="0 0 16 16"\n                  fill="none"\n                  xmlns="http://www.w3.org/2000/svg"\n                >\n                  <path\n                    d="M14.0975 8.78873L15.8286 10.1033C16.0082 10.2535 16.0466 10.4288 15.944 10.6291L14.2898 13.4085C14.1872 13.6088 14.0205 13.6588 13.7897 13.5587L11.7508 12.77C11.2892 13.0955 10.8275 13.3584 10.3659 13.5587L10.0581 15.662C10.0325 15.8873 9.89144 16 9.63497 16H6.36503C6.13421 16 5.99315 15.8873 5.94186 15.662L5.6341 13.5587C5.14681 13.3584 4.68517 13.0955 4.24918 12.77L2.21027 13.5587C1.97945 13.6338 1.81275 13.5837 1.71016 13.4085L0.0559563 10.6291C-0.0466302 10.4288 -0.00816028 10.2535 0.171366 10.1033L1.90251 8.78873C1.87687 8.48826 1.86404 8.22535 1.86404 8C1.86404 7.77465 1.87687 7.51174 1.90251 7.21127L0.171366 5.89671C-0.00816028 5.74648 -0.0466302 5.57121 0.0559563 5.37089L1.71016 2.59155C1.8384 2.39124 2.0051 2.34116 2.21027 2.44131L4.24918 3.23005C4.71082 2.90454 5.17246 2.64163 5.6341 2.44131L5.94186 0.338028C5.99315 0.112676 6.13421 0 6.36503 0H9.63497C9.89144 0 10.0325 0.112676 10.0581 0.338028L10.3659 2.44131C10.8532 2.64163 11.3148 2.90454 11.7508 3.23005L13.7897 2.44131C14.0205 2.3662 14.1872 2.41628 14.2898 2.59155L15.944 5.37089C16.0466 5.57121 16.0082 5.74648 15.8286 5.89671L14.0975 7.21127C14.1488 7.51174 14.1744 7.77465 14.1744 8C14.1744 8.22535 14.1488 8.48826 14.0975 8.78873ZM8 10.8169C8.78222 10.8169 9.45545 10.5415 10.0197 9.99061C10.5839 9.43975 10.866 8.77621 10.866 8C10.866 7.22379 10.5839 6.56025 10.0197 6.00939C9.45545 5.45853 8.78222 5.1831 8 5.1831C7.21778 5.1831 6.54455 5.45853 5.98033 6.00939C5.4161 6.56025 5.13399 7.22379 5.13399 8C5.13399 8.77621 5.4161 9.43975 5.98033 9.99061C6.54455 10.5415 7.21778 10.8169 8 10.8169Z"\n                    fill="white"\n                    fill-opacity="0.9"\n                  />\n                </svg>\n              </div>\n              <div class="mg_fullscreen mg_gtc">\n                <svg\n                  id="mg_fullscreen_on_"\n                  viewBox="0 0 17 17"\n                  fill="none"\n                  xmlns="http://www.w3.org/2000/svg"\n                >\n                  <path\n                    d="M12.25 1H16V4.75"\n                    stroke="white"\n                    stroke-opacity="0.9"\n                    stroke-width="2"\n                    stroke-linecap="round"\n                    stroke-linejoin="round"\n                  />\n                  <path\n                    d="M16 12.25V16H12.25"\n                    stroke="white"\n                    stroke-opacity="0.9"\n                    stroke-width="2"\n                    stroke-linecap="round"\n                    stroke-linejoin="round"\n                  />\n                  <path\n                    d="M4.75 16H1V12.25"\n                    stroke="white"\n                    stroke-opacity="0.9"\n                    stroke-width="2"\n                    stroke-linecap="round"\n                    stroke-linejoin="round"\n                  />\n                  <path\n                    d="M1 4.75V1H4.75"\n                    stroke="white"\n                    stroke-opacity="0.9"\n                    stroke-width="2"\n                    stroke-linecap="round"\n                    stroke-linejoin="round"\n                  />\n                </svg>\n                <svg\n                  id="mg_fullscreen_off_"\n                  viewBox="0 0 17 17"\n                  fill="none"\n                  xmlns="http://www.w3.org/2000/svg"\n                >\n                  <path\n                    d="M5.66667 0.944444C5.66667 0.693962 5.56716 0.453739 5.39004 0.276621C5.21293 0.0995036 4.9727 0 4.72222 0C4.47174 0 4.23152 0.0995036 4.0544 0.276621C3.87728 0.453739 3.77778 0.693962 3.77778 0.944444V3.30556C3.77778 3.4308 3.72803 3.55091 3.63947 3.63947C3.55091 3.72803 3.4308 3.77778 3.30556 3.77778H0.944444C0.693962 3.77778 0.453739 3.87728 0.276621 4.0544C0.0995036 4.23152 0 4.47174 0 4.72222C0 4.9727 0.0995036 5.21293 0.276621 5.39004C0.453739 5.56716 0.693962 5.66667 0.944444 5.66667H3.30556C3.93176 5.66667 4.53232 5.41791 4.97511 4.97511C5.41791 4.53232 5.66667 3.93176 5.66667 3.30556V0.944444ZM5.66667 16.0556C5.66667 16.306 5.56716 16.5463 5.39004 16.7234C5.21293 16.9005 4.9727 17 4.72222 17C4.47174 17 4.23152 16.9005 4.0544 16.7234C3.87728 16.5463 3.77778 16.306 3.77778 16.0556V13.6944C3.77778 13.5692 3.72803 13.4491 3.63947 13.3605C3.55091 13.272 3.4308 13.2222 3.30556 13.2222H0.944444C0.693962 13.2222 0.453739 13.1227 0.276621 12.9456C0.0995036 12.7685 0 12.5283 0 12.2778C0 12.0273 0.0995036 11.7871 0.276621 11.61C0.453739 11.4328 0.693962 11.3333 0.944444 11.3333H3.30556C3.93176 11.3333 4.53232 11.5821 4.97511 12.0249C5.41791 12.4677 5.66667 13.0682 5.66667 13.6944V16.0556ZM12.2778 0C12.0273 0 11.7871 0.0995036 11.61 0.276621C11.4328 0.453739 11.3333 0.693962 11.3333 0.944444V3.30556C11.3333 3.93176 11.5821 4.53232 12.0249 4.97511C12.4677 5.41791 13.0682 5.66667 13.6944 5.66667H16.0556C16.306 5.66667 16.5463 5.56716 16.7234 5.39004C16.9005 5.21293 17 4.9727 17 4.72222C17 4.47174 16.9005 4.23152 16.7234 4.0544C16.5463 3.87728 16.306 3.77778 16.0556 3.77778H13.6944C13.5692 3.77778 13.4491 3.72803 13.3605 3.63947C13.272 3.55091 13.2222 3.4308 13.2222 3.30556V0.944444C13.2222 0.693962 13.1227 0.453739 12.9456 0.276621C12.7685 0.0995036 12.5283 0 12.2778 0ZM11.3333 16.0556C11.3333 16.306 11.4328 16.5463 11.61 16.7234C11.7871 16.9005 12.0273 17 12.2778 17C12.5283 17 12.7685 16.9005 12.9456 16.7234C13.1227 16.5463 13.2222 16.306 13.2222 16.0556V13.6944C13.2222 13.5692 13.272 13.4491 13.3605 13.3605C13.4491 13.272 13.5692 13.2222 13.6944 13.2222H16.0556C16.306 13.2222 16.5463 13.1227 16.7234 12.9456C16.9005 12.7685 17 12.5283 17 12.2778C17 12.0273 16.9005 11.7871 16.7234 11.61C16.5463 11.4328 16.306 11.3333 16.0556 11.3333H13.6944C13.0682 11.3333 12.4677 11.5821 12.0249 12.0249C11.5821 12.4677 11.3333 13.0682 11.3333 13.6944V16.0556Z"\n                    fill="white"\n                  />\n                </svg>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>';
+const mg_error_block = document.querySelector(".mg_error_block"),
   mg_video_thumbnail = document.querySelector(".mg_video_thumbnail"),
   mg_loader = document.querySelector(".mg_loader"),
   mg_video = document.querySelector(".mg_video"),
@@ -50,11 +52,11 @@ let mg_main_controls,
 function InitializeVideo(e) {
   if (e.includes(".m3u8"))
     if (Hls.isSupported()) {
-      var t = new Hls();
-      t.loadSource(e),
-        t.attachMedia(mg_video),
-        t.on(Hls.Events.MANIFEST_PARSED, function () {}),
-        t.on(Hls.Events.ERROR, function () {
+      var n = new Hls();
+      n.loadSource(e),
+        n.attachMedia(mg_video),
+        n.on(Hls.Events.MANIFEST_PARSED, function () {}),
+        n.on(Hls.Events.ERROR, function () {
           mg_error_block.classList.remove("mg_error_block_hidden");
         });
     } else
@@ -83,48 +85,48 @@ function initializePlayer() {
     localStorage.getItem("mg_player"))
   ) {
     let e = localStorage.getItem("mg_player"),
-      t = JSON.parse(e),
-      i = t.filter((e) => e.id == MG_PLAYER.id);
-    0 !== i.length
+      n = JSON.parse(e),
+      t = n.filter((e) => e.id == MG_PLAYER.id);
+    0 !== t.length
       ? (movetoFirstItem(
-          t,
-          t.findIndex((e) => e.id == i[0].id)
+          n,
+          n.findIndex((e) => e.id == t[0].id)
         ),
         MG_PLAYER.seasons &&
-          (i[0].season <= Object.keys(MG_PLAYER.seasons).length &&
-          i[0].episode <= MG_PLAYER.seasons[i[0].season].length
-            ? ((active_season = i[0].season),
-              (active_episode = i[0].episode),
+          (t[0].season <= Object.keys(MG_PLAYER.seasons).length &&
+          t[0].episode <= MG_PLAYER.seasons[t[0].season].length
+            ? ((active_season = t[0].season),
+              (active_episode = t[0].episode),
               setTimeout(() => {
                 const e = mg_player_seasons.querySelector(
-                    `[data-season="${i[0]?.season}"]`
+                    `[data-season="${t[0]?.season}"]`
                   ),
-                  t = mg_player_eps_scroll.querySelector(
-                    `[data-ep="${i[0]?.episode}"]`
+                  n = mg_player_eps_scroll.querySelector(
+                    `[data-ep="${t[0]?.episode}"]`
                   );
                 e &&
                   mg_player_seasons &&
                   (mg_player_seasons.scrollTop =
                     e.offsetTop - mg_player_seasons.offsetTop - 100),
-                  t &&
+                  n &&
                     mg_player_eps_scroll &&
                     (mg_player_eps_scroll.scrollTop =
-                      t.offsetTop - mg_player_eps_scroll.offsetTop - 100);
+                      n.offsetTop - mg_player_eps_scroll.offsetTop - 100);
               }, 0),
               changeInitialEpisode(getEpisodeRequest()))
             : ((active_season = 1),
               (active_episode = 1),
-              (t[0].id = MG_PLAYER.id),
-              (t[0].time = 0),
-              (t[0].episode = 1),
-              (t[0].season = 1),
-              localStorage.setItem("mg_player", JSON.stringify(t)))),
-        cutIfTooLarge(t, 5),
-        localStorage.setItem("mg_player", JSON.stringify(t)))
+              (n[0].id = MG_PLAYER.id),
+              (n[0].time = 0),
+              (n[0].episode = 1),
+              (n[0].season = 1),
+              localStorage.setItem("mg_player", JSON.stringify(n)))),
+        cutIfTooLarge(n, 5),
+        localStorage.setItem("mg_player", JSON.stringify(n)))
       : (MG_PLAYER.seasons,
-        t.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }),
-        cutIfTooLarge(t, 5),
-        localStorage.setItem("mg_player", JSON.stringify(t)));
+        n.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }),
+        cutIfTooLarge(n, 5),
+        localStorage.setItem("mg_player", JSON.stringify(n)));
   } else
     MG_PLAYER.seasons,
       localStorage.setItem(
@@ -228,26 +230,26 @@ let sTimer,
   isDragging = !1;
 function onDraging(e) {
   if (isDragging) {
-    var t = (100 / mg_timeline_scaler.offsetWidth) * e.offsetX;
-    mg_time_indicator.style.width = t + "%";
+    var n = (100 / mg_timeline_scaler.offsetWidth) * e.offsetX;
+    mg_time_indicator.style.width = n + "%";
   }
 }
 function onDragingTouch(e) {
-  const t = e.touches[0];
+  const n = e.touches[0];
   if (isDragging) {
-    var i =
+    var t =
       (100 / mg_timeline_scaler.offsetWidth) *
-      (t.clientX - mg_timeline_scaler.getBoundingClientRect().left);
-    mg_time_indicator.style.width = i + "%";
+      (n.clientX - mg_timeline_scaler.getBoundingClientRect().left);
+    mg_time_indicator.style.width = t + "%";
   }
 }
 function contextClick(e) {
   e.preventDefault();
-  const t = e.offsetX,
-    i = e.offsetY;
+  const n = e.offsetX,
+    t = e.offsetY;
   clearTimeout(sTimer),
-    (mg_context_menu.style.left = `${t}px`),
-    (mg_context_menu.style.top = `${i}px`),
+    (mg_context_menu.style.left = `${n}px`),
+    (mg_context_menu.style.top = `${t}px`),
     (mg_context_menu.style.display = "flex"),
     (sTimer = setTimeout(() => {
       mg_context_menu.style.display = "none";
@@ -365,50 +367,50 @@ function removeSeeTime() {
 }
 function seeTime(e) {
   if (is_loaded) {
-    var t = (100 / mg_timeline_scaler.offsetWidth) * e.offsetX;
+    var n = (100 / mg_timeline_scaler.offsetWidth) * e.offsetX;
     (mg_timeline_helper.style.opacity = 1),
       (mg_timeline_helper.style.transform = `translateX(${
         e.offsetX - mg_timeline_helper.offsetWidth / 2
       }px)`);
-    var i = percentageToTime(t);
-    i &&
-      ((mg_timeline_helper_time.innerHTML = formatTime(i)),
-      (mg_helper_video.currentTime = i.toFixed(6)),
-      (mg_time_indicator_helper.style.width = t + "%"));
+    var t = percentageToTime(n);
+    t &&
+      ((mg_timeline_helper_time.innerHTML = formatTime(t)),
+      (mg_helper_video.currentTime = t.toFixed(6)),
+      (mg_time_indicator_helper.style.width = n + "%"));
   }
 }
 function seeTimeTouch(e) {
-  const t = e.touches[0];
+  const n = e.touches[0];
   if (is_loaded) {
     const e =
       (100 / mg_timeline_scaler.offsetWidth) *
-      (t.clientX - mg_timeline_scaler.getBoundingClientRect().left);
+      (n.clientX - mg_timeline_scaler.getBoundingClientRect().left);
     (mg_timeline_helper.style.opacity = 1),
       (mg_timeline_helper.style.transform = `translateX(${
-        t.clientX -
+        n.clientX -
         mg_timeline_scaler.getBoundingClientRect().left -
         mg_timeline_helper.offsetWidth / 2
       }px)`);
-    const i = percentageToTime(e);
-    (mg_timeline_helper_time.innerHTML = formatTime(i)),
-      (mg_helper_video.currentTime = i.toFixed(6)),
+    const t = percentageToTime(e);
+    (mg_timeline_helper_time.innerHTML = formatTime(t)),
+      (mg_helper_video.currentTime = t.toFixed(6)),
       (mg_time_indicator_helper.style.width = e + "%");
   }
 }
 function measureTimeMouse(e) {
   if (is_loaded) {
-    var t = (100 / mg_timeline_scaler.offsetWidth) * e.offsetX;
-    (mg_time_indicator.style.width = t + "%"),
-      (mg_video.currentTime = (mg_video.duration / 100) * t);
+    var n = (100 / mg_timeline_scaler.offsetWidth) * e.offsetX;
+    (mg_time_indicator.style.width = n + "%"),
+      (mg_video.currentTime = (mg_video.duration / 100) * n);
   }
 }
 function measureTimeTouch(e) {
-  const t =
+  const n =
     e instanceof MouseEvent
       ? e.offsetX
       : e.touches[0].clientX - mg_timeline_scaler.getBoundingClientRect().left;
   if (is_loaded) {
-    const e = (100 / mg_timeline_scaler.offsetWidth) * t;
+    const e = (100 / mg_timeline_scaler.offsetWidth) * n;
     (mg_time_indicator.style.width = e + "%"),
       (mg_video.currentTime = ((mg_video.duration / 100) * e).toFixed(6)),
       (mg_starttime.innerHTML = formatTime(mg_video.currentTime));
@@ -416,8 +418,8 @@ function measureTimeTouch(e) {
 }
 function measureTime(e) {
   if (is_loaded && time_measuring) {
-    var t = (100 / mg_video.duration) * e;
-    mg_time_indicator.style.width = t + "%";
+    var n = (100 / mg_video.duration) * e;
+    mg_time_indicator.style.width = n + "%";
   }
 }
 function measureSound() {
@@ -496,26 +498,26 @@ function firstStart() {
     changeControls("play");
 }
 function formatTime(e) {
-  const t = Math.floor(e / 3600),
-    i = Math.floor((e % 3600) / 60),
-    n = Math.floor(e % 60);
-  return t > 0
-    ? `${t}:${String(i).padStart(2, "0")}:${String(n).padStart(2, "0")}`
-    : `${i}:${String(n).padStart(2, "0")}`;
+  const n = Math.floor(e / 3600),
+    t = Math.floor((e % 3600) / 60),
+    i = Math.floor(e % 60);
+  return n > 0
+    ? `${n}:${String(t).padStart(2, "0")}:${String(i).padStart(2, "0")}`
+    : `${t}:${String(i).padStart(2, "0")}`;
 }
 function percentageToTime(e) {
   return mg_video.duration ? (mg_video.duration / 100) * e : null;
 }
 mg_qualitiesChildrens.forEach((e) => {
   e.addEventListener("click", () => {
-    var t = mg_video.currentTime,
-      i = mg_video.paused;
+    var n = mg_video.currentTime,
+      t = mg_video.paused;
     (mg_video.src = InitializeVideo(
       MG_PLAYER.languages[mg_main_controls.lang][e.innerText]
     )),
       saveControls({ quality: e.innerText }),
-      (mg_video.currentTime = t.toFixed(6)),
-      0 == i && mg_video.play(),
+      (mg_video.currentTime = n.toFixed(6)),
+      0 == t && mg_video.play(),
       mg_qualitiesChildrens.forEach((e) =>
         e.classList.remove("mg_button_active")
       ),
@@ -524,14 +526,14 @@ mg_qualitiesChildrens.forEach((e) => {
 }),
   mg_languagesChildrens.forEach((e) => {
     e.addEventListener("click", () => {
-      var t = mg_video.currentTime,
-        i = mg_video.isPaused;
+      var n = mg_video.currentTime,
+        t = mg_video.isPaused;
       (mg_video.src = InitializeVideo(
         MG_PLAYER.languages[e.innerText][mg_main_controls.quality]
       )),
         saveControls({ lang: e.innerText }),
-        (mg_video.currentTime = t.toFixed(6)),
-        0 == i && mg_video.play(),
+        (mg_video.currentTime = n.toFixed(6)),
+        0 == t && mg_video.play(),
         mg_languagesChildrens.forEach((e) =>
           e.classList.remove("mg_button_active")
         ),
@@ -548,46 +550,46 @@ mg_qualitiesChildrens.forEach((e) => {
   });
 let clickCount = 0;
 function dbClick(e) {
-  let t;
+  let n;
   clickCount++,
     1 === clickCount
-      ? (t = setTimeout(() => {
+      ? (n = setTimeout(() => {
           clickCount = 0;
         }, 300))
-      : 2 === clickCount && (clearTimeout(t), (clickCount = 0), e());
+      : 2 === clickCount && (clearTimeout(n), (clickCount = 0), e());
 }
-function movetoFirstItem(e, t) {
-  if (t < 0 || t >= e.length) return e;
-  const i = e.splice(t, 1)[0];
-  return e.splice(0, 0, i), e;
+function movetoFirstItem(e, n) {
+  if (n < 0 || n >= e.length) return e;
+  const t = e.splice(n, 1)[0];
+  return e.splice(0, 0, t), e;
 }
-function cutIfTooLarge(e, t) {
-  e.length > t && e.splice(t);
+function cutIfTooLarge(e, n) {
+  e.length > n && e.splice(n);
 }
 function replaceTimeline(e) {
-  let t = localStorage.getItem("mg_player"),
-    i = JSON.parse(t),
-    n = i.findIndex((e) => e.id == MG_PLAYER.id);
-  (i[n].time = e), localStorage.setItem("mg_player", JSON.stringify(i));
+  let n = localStorage.getItem("mg_player"),
+    t = JSON.parse(n),
+    i = t.findIndex((e) => e.id == MG_PLAYER.id);
+  (t[i].time = e), localStorage.setItem("mg_player", JSON.stringify(t));
 }
 function getSavedTime() {
   let e = localStorage.getItem("mg_player"),
-    t = JSON.parse(e),
-    i = t.findIndex((e) => e.id == MG_PLAYER.id);
-  return -1 !== i ? t[i].time : 0;
+    n = JSON.parse(e),
+    t = n.findIndex((e) => e.id == MG_PLAYER.id);
+  return -1 !== t ? n[t].time : 0;
 }
 function getCheckOfControls() {
   let e = "ENG" == mg_main_controls.lang ? "ENG" : "GEO",
-    t = "SD" == mg_main_controls.quality ? "SD" : "HD";
-  "GEO" == mg_main_controls.lang && MG_PLAYER.languages.GEO[t]
-    ? ((mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t])),
-      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t])))
-    : "ENG" == mg_main_controls.lang && MG_PLAYER.languages.ENG[t]
+    n = "SD" == mg_main_controls.quality ? "SD" : "HD";
+  "GEO" == mg_main_controls.lang && MG_PLAYER.languages.GEO[n]
+    ? ((mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[n])),
+      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.GEO[n])))
+    : "ENG" == mg_main_controls.lang && MG_PLAYER.languages.ENG[n]
     ? ((e = "ENG"),
-      (mg_video.src = InitializeVideo(MG_PLAYER.languages.ENG[t])),
-      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.ENG[t])))
-    : ((mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t])),
-      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.GEO[t]))),
+      (mg_video.src = InitializeVideo(MG_PLAYER.languages.ENG[n])),
+      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.ENG[n])))
+    : ((mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[n])),
+      (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages.GEO[n]))),
     "HD" == mg_main_controls.quality && MG_PLAYER.languages[e].HD
       ? ((mg_video.src = InitializeVideo(MG_PLAYER.languages[e].HD)),
         (mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[e].HD)))
@@ -604,15 +606,15 @@ function getCheckOfControls() {
     }),
     measureSoundHand(mg_main_controls.volume);
 }
-function saveControls({ lang: e, volume: t, speed: i, quality: n }) {
+function saveControls({ lang: e, volume: n, speed: t, quality: i }) {
   if (localStorage.getItem("mg_player_controls")) {
-    let o = localStorage.getItem("mg_player_controls"),
-      s = JSON.parse(o);
-    (s.lang = e ?? s.lang),
-      (s.volume = t ?? s.volume),
-      (s.speed = i ?? s.speed),
-      (s.quality = n ?? s.quality),
-      localStorage.setItem("mg_player_controls", JSON.stringify(s));
+    let s = localStorage.getItem("mg_player_controls"),
+      o = JSON.parse(s);
+    (o.lang = e ?? o.lang),
+      (o.volume = n ?? o.volume),
+      (o.speed = t ?? o.speed),
+      (o.quality = i ?? o.quality),
+      localStorage.setItem("mg_player_controls", JSON.stringify(o));
   }
 }
 function mouseTouchDragger() {
@@ -668,31 +670,31 @@ function printSeasons() {
       active_season == e ? "mg_se_button_active" : ""
     } ">\n    ${e}\n  </div>`;
   let e = Array.from(mg_player_seasons.children);
-  e.forEach((t) => {
-    t.addEventListener("click", () => {
-      (active_season = t.getAttribute("data-season")),
+  e.forEach((n) => {
+    n.addEventListener("click", () => {
+      (active_season = n.getAttribute("data-season")),
         printEpisodes(),
         e.forEach((e) => e.classList.remove("mg_se_button_active")),
-        t.classList.add("mg_se_button_active");
+        n.classList.add("mg_se_button_active");
     });
   });
 }
 function printEpisodes() {
   const e = getCurStorage().season;
   (mg_player_eps_scroll.innerHTML = ""),
-    MG_PLAYER.seasons[active_season].forEach((t, i) => {
-      (i += 1),
-        (mg_player_eps_scroll.innerHTML += `<div data-ep="${i}" class="mg_ep_button ${
-          active_episode == i && e == active_season ? "mg_ep_button_active" : ""
-        } ">\n      ${i} ეპიზოდი\n      </div>`);
+    MG_PLAYER.seasons[active_season].forEach((n, t) => {
+      (t += 1),
+        (mg_player_eps_scroll.innerHTML += `<div data-ep="${t}" class="mg_ep_button ${
+          active_episode == t && e == active_season ? "mg_ep_button_active" : ""
+        } ">\n      ${t} ეპიზოდი\n      </div>`);
     });
-  let t = Array.from(mg_player_eps_scroll.children);
-  t.forEach((e) => {
+  let n = Array.from(mg_player_eps_scroll.children);
+  n.forEach((e) => {
     e.addEventListener("click", () => {
       (active_episode = e.getAttribute("data-ep")),
         mg_error_block.classList.add("mg_error_block_hidden"),
         changeEpisode(getEpisodeRequest()),
-        t.forEach((e) => e.classList.remove("mg_ep_button_active")),
+        n.forEach((e) => e.classList.remove("mg_ep_button_active")),
         e.classList.add("mg_ep_button_active"),
         closeEpisodes();
     });
@@ -721,11 +723,11 @@ function changeEpisode(e) {
     localStorage.getItem("mg_player"))
   ) {
     let e = localStorage.getItem("mg_player"),
-      t = JSON.parse(e);
-    (t[0].time = 0),
-      (t[0].episode = parseInt(active_episode)),
-      (t[0].season = active_season),
-      localStorage.setItem("mg_player", JSON.stringify(t));
+      n = JSON.parse(e);
+    (n[0].time = 0),
+      (n[0].episode = parseInt(active_episode)),
+      (n[0].season = active_season),
+      localStorage.setItem("mg_player", JSON.stringify(n));
   }
   (MG_PLAYER.languages = getEpisodesObjectRequest()),
     0 == is_started && firstStart(),
