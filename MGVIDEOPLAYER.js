@@ -379,7 +379,7 @@ function initializePlayer() {
   if (mg_main_controls.volume == 0) {
     soundOnOff("off");
   }
-  if (MG_PLAYER.TYPE == "SERIES") {
+  if (MG_PLAYER.type == "SERIES") {
     mg_player_eps.classList.remove("mg_player_eps_hidden");
   }
   getCheckOfControls();
@@ -397,7 +397,7 @@ function initializePlayer() {
         mg_save,
         mg_save.findIndex((item) => item.id == get_cur[0].id)
       );
-      if (MG_PLAYER.TYPE == "SERIES") {
+      if (MG_PLAYER.type == "SERIES") {
         if (
           get_cur[0].season <= Object.keys(MG_PLAYER.seasons).length &&
           get_cur[0].episode <= MG_PLAYER.seasons[get_cur[0].season].length
@@ -440,7 +440,7 @@ function initializePlayer() {
       cutIfTooLarge(mg_save, 5);
       localStorage.setItem("mg_player", JSON.stringify(mg_save));
     } else {
-      if (MG_PLAYER.TYPE == "SERIES") {
+      if (MG_PLAYER.type == "SERIES") {
         mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
       } else {
         mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
@@ -449,7 +449,7 @@ function initializePlayer() {
       localStorage.setItem("mg_player", JSON.stringify(mg_save));
     }
   } else {
-    if (MG_PLAYER.TYPE == "SERIES") {
+    if (MG_PLAYER.type == "SERIES") {
       localStorage.setItem(
         "mg_player",
         JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
@@ -1144,7 +1144,7 @@ function mouseTouchDragger() {
 
 // * FOR EPISODES
 function initialiseEpisodes() {
-  if (MG_PLAYER.TYPE == "SERIES") {
+  if (MG_PLAYER.type == "SERIES") {
     if (active_season == null && active_episode == null) {
       active_season = 1;
       active_episode = 1;
