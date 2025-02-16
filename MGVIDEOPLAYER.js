@@ -29,9 +29,9 @@ mg_player.innerHTML = ` <div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
-      <video src="" class="mg_video"></video>
+      <video  class="mg_video"></video>
       <div class="mg_main_play">
-        <img class="mg_video_thumbnail" src="./assets/thumbnail.png" />
+        <img class="mg_video_thumbnail"  />
         <div class="mg_play_icon">
           <svg
             viewBox="0 0 14 16"
@@ -55,7 +55,7 @@ mg_player.innerHTML = ` <div class="mg_player_eps mg_player_eps_hidden">
         <div class="mg_controls_bar">
           <div class="mg_timeline_scaler">
             <div class="mg_timeline_helper">
-              <video class="mg_helper_video" src="" muted></video>
+              <video class="mg_helper_video"  muted></video>
               <p class="mg_timeline_helper_time">00:00</p>
             </div>
             <div class="mg_timeline">
@@ -347,16 +347,21 @@ function InitializeVideo(videoUrl) {
         mg_error_block.classList.remove("mg_error_block_hidden");
       });
     } else if (mg_video.canPlayType("application/vnd.apple.mpegurl")) {
-      mg_video.src = videoUrl;
+      changeVideoUrl(videoUrl);
     } else {
       mg_error_block.classList.remove("mg_error_block_hidden");
     }
   } else {
-    mg_video.src = videoUrl;
+    changeVideoUrl(videoUrl);
   }
 }
 
 let mg_main_controls;
+
+function changeVideoUrl(url) {
+  mg_video.src = url;
+  mg_helper_video.src = url;
+}
 
 if (localStorage.getItem("mg_player_controls")) {
   mg_main_controls = JSON.parse(localStorage.getItem("mg_player_controls"));
@@ -622,9 +627,8 @@ mg_qualitiesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.paused;
-    mg_video.src = InitializeVideo(
-      MG_PLAYER.languages[mg_main_controls.lang][item.innerText]
-    );
+    InitializeVideo(MG_PLAYER.languages[mg_main_controls.lang][item.innerText]);
+
     saveControls({ quality: item.innerText });
 
     mg_video.currentTime = saveTime.toFixed(6);
@@ -641,7 +645,7 @@ mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     var saveTime = mg_video.currentTime;
     var saveState = mg_video.isPaused;
-    mg_video.src = InitializeVideo(
+    InitializeVideo(
       MG_PLAYER.languages[item.innerText][mg_main_controls.quality]
     );
     saveControls({ lang: item.innerText });
@@ -1037,37 +1041,25 @@ function getCheckOfControls() {
     mg_main_controls.lang == "GEO" &&
     MG_PLAYER.languages.GEO[chosedQuality]
   ) {
-    mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
-    mg_helper_video.src = InitializeVideo(
-      MG_PLAYER.languages.GEO[chosedQuality]
-    );
+    InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
   } else if (
     mg_main_controls.lang == "ENG" &&
     MG_PLAYER.languages.ENG[chosedQuality]
   ) {
     chosedLang = "ENG";
-    mg_video.src = InitializeVideo(MG_PLAYER.languages.ENG[chosedQuality]);
-    mg_helper_video.src = InitializeVideo(
-      MG_PLAYER.languages.ENG[chosedQuality]
-    );
+    InitializeVideo(MG_PLAYER.languages.ENG[chosedQuality]);
   } else {
-    mg_video.src = InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
-    mg_helper_video.src = InitializeVideo(
-      MG_PLAYER.languages.GEO[chosedQuality]
-    );
+    InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
   }
   if (mg_main_controls.quality == "HD" && MG_PLAYER.languages[chosedLang].HD) {
-    mg_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
-    mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
+    InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
   } else if (
     mg_main_controls.lang == "SD" &&
     MG_PLAYER.languages[chosedLang].SD
   ) {
-    mg_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
-    mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
+    InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
   } else {
-    mg_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
-    mg_helper_video.src = InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
+    InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
   }
 
   mg_speed_button.forEach((item) => {
@@ -1231,13 +1223,11 @@ function initializePlayerSeries() {
   }
 }
 function changeInitialEpisode(episode) {
-  mg_video.src = InitializeVideo(episode);
-  mg_helper_video.src = InitializeVideo(episode);
+  InitializeVideo(episode);
 }
 
 function changeEpisode(episode) {
-  mg_video.src = InitializeVideo(episode);
-  mg_helper_video.src = InitializeVideo(episode);
+  InitializeVideo(episode);
   mg_video.currentTime = 0;
   mg_helper_video.currentTime = 0;
   if (localStorage.getItem("mg_player")) {
