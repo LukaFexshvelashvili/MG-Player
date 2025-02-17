@@ -1,3 +1,29 @@
+:root {
+  --main: #f5004f;
+  --mainhover: #ff0c59;
+}
+@font-face {
+  font-family: mbold;
+  src: url("./assets/OnService-Bold.ttf");
+}
+@font-face {
+  font-family: mmedium;
+  src: url("./assets/OnService-Medium.ttf");
+}
+@font-face {
+  font-family: mregular;
+  src: url("./assets/OnService-Regular.ttf");
+}
+@font-face {
+  font-family: msemibold;
+  src: url("./assets/OnService-SemiBold.ttf");
+}
+body {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
 input,
 textarea,
 button,
@@ -28,8 +54,8 @@ a {
 .mg_player {
   user-select: none;
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 500px;
+  aspect-ratio: 16/9;
   border-radius: 8px;
   background-color: black;
   overflow: hidden;
@@ -460,7 +486,7 @@ a {
     height: 100%;
     width: 100%;
   }
-  #mg_pause_ {
+  .mg_pause_ {
     display: none;
   }
 }
@@ -642,7 +668,7 @@ a {
       .mg_ep_button_active {
         background-color: var(--main);
         &:hover {
-          background-color: var(--mainHover);
+          background-color: var(--mainhover);
         }
       }
     }
@@ -697,7 +723,7 @@ a {
       .mg_se_button_active {
         background-color: var(--main);
         &:hover {
-          background-color: var(--mainHover);
+          background-color: var(--mainhover);
         }
       }
     }
@@ -724,7 +750,7 @@ a {
       opacity: 0;
     }
     &:hover {
-      background-color: var(--mainHover);
+      background-color: var(--mainhover);
     }
   }
 }
@@ -740,25 +766,45 @@ a {
 .mg_player_seasons_scroll::-webkit-scrollbar-thumb {
   background-color: var(--main);
 }
-@media (max-width: 950px) {
-  .mg_sound_mob {
-    display: block;
+.mg_play_pause_mobile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 50px;
+  transition: visibility 0.4s, opacity 0.4s;
+  .mg_play_ {
+    transform: translateX(3px);
+  }
+  svg path {
+    fill: rgba(255, 255, 255, 0.9);
   }
 }
-
-@media (max-width: 700px) {
-  .mg_skip_left,
-  .mg_skip_right {
-    display: block;
-  }
+@media (max-width: 950px) {
   .mg_timeline_helper {
     height: 0;
     width: 0;
+    bottom: 15px;
     video {
       display: none;
       height: 0%;
       width: 0%;
     }
+  }
+  .mg_play_pause_full {
+    pointer-events: none;
+  }
+  .mg_sound_mob {
+    display: block;
+  }
+  .mg_skip_left,
+  .mg_skip_right {
+    user-select: none;
+    display: block;
   }
 }
 
@@ -799,10 +845,10 @@ a {
   #mg_sound_off_ {
     height: 18px;
   }
-  #mg_play_ {
+  .mg_play_ {
     height: 20px;
   }
-  #mg_pause_ {
+  .mg_pause_ {
     height: 20px;
   }
   #mg_fullscreen_on_ {

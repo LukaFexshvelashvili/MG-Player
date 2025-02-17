@@ -1,6 +1,6 @@
 // * MAIN
 const mg_player = document.querySelector(".mg_player");
-mg_player.innerHTML = ` <div class="mg_player_eps mg_player_eps_hidden">
+mg_player.innerHTML = `      <div class="mg_player_eps mg_player_eps_hidden">
         <div class="mg_player_ep_button">ეპიზოდები</div>
         <div class="mg_player_eps_container">
           <div class="mg_player_eps_scroll"></div>
@@ -25,13 +25,13 @@ mg_player.innerHTML = ` <div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_error_block mg_error_hidden">
         <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეერით</div>
       </div>
-      <div class="mg_context_menu">MG PLAYER V3.0</div>
+      <div class="mg_context_menu">MG PLAYER V3.2</div>
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
-      <video  class="mg_video"></video>
+      <video class="mg_video"></video>
       <div class="mg_main_play">
-        <img class="mg_video_thumbnail"  />
+        <img class="mg_video_thumbnail" />
         <div class="mg_play_icon">
           <svg
             viewBox="0 0 14 16"
@@ -50,12 +50,24 @@ mg_player.innerHTML = ` <div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_skip_right"></div>
 
       <div class="mg_play_pause_full"></div>
+      <div class="mg_play_pause mg_gtc mg_play_pause_mobile mg_controls_hidden">
+        <svg class="mg_play_" viewBox="0 0 16 16">
+          <path fill="white" opacity="0.9" d="M2 1v14l12-7z" />
+        </svg>
+        <svg class="mg_pause_" viewBox="0 0 256 384">
+          <path
+            fill="white"
+            opacity="0.9"
+            d="M0 341V43h85v298H0zM171 43h85v298h-85V43z"
+          />
+        </svg>
+      </div>
       <div class="mg_controls mg_controls_hidden">
         <div class="mg_controls_shadow"></div>
         <div class="mg_controls_bar">
           <div class="mg_timeline_scaler">
             <div class="mg_timeline_helper">
-              <video class="mg_helper_video"  muted></video>
+              <video class="mg_helper_video" muted></video>
               <p class="mg_timeline_helper_time">00:00</p>
             </div>
             <div class="mg_timeline">
@@ -66,10 +78,10 @@ mg_player.innerHTML = ` <div class="mg_player_eps mg_player_eps_hidden">
           <div class="mg_controls_row">
             <div class="mg_first_row">
               <div class="mg_play_pause mg_gtc">
-                <svg id="mg_play_" viewBox="0 0 16 16">
+                <svg class="mg_play_" viewBox="0 0 16 16">
                   <path fill="white" opacity="0.9" d="M2 1v14l12-7z" />
                 </svg>
-                <svg id="mg_pause_" viewBox="0 0 256 384">
+                <svg class="mg_pause_" viewBox="0 0 256 384">
                   <path
                     fill="white"
                     opacity="0.9"
@@ -268,9 +280,10 @@ const mg_main_play = document.querySelector(".mg_main_play");
 const mg_play_pause_full = document.querySelector(".mg_play_pause_full");
 
 // * PLAY PAUSE
-const mg_play_pause = document.querySelector(".mg_play_pause");
-const mg_play_ = document.querySelector("#mg_play_");
-const mg_pause_ = document.querySelector("#mg_pause_");
+const mg_play_pause_mobile = document.querySelector(".mg_play_pause_mobile");
+const mg_play_pause = document.querySelectorAll(".mg_play_pause");
+const mg_play_ = document.querySelectorAll(".mg_play_");
+const mg_pause_ = document.querySelectorAll(".mg_pause_");
 
 // * SOUNDS
 const mg_sound_icon = document.querySelector(".mg_sound_icon");
@@ -486,13 +499,15 @@ mg_player.addEventListener("mousemove", mouseMoving);
 mg_player.addEventListener("touchmove", mouseMoving);
 mg_fullscreen.addEventListener("click", fullscreenOnOff);
 mg_main_play.addEventListener("click", firstStart);
-mg_skip_left.addEventListener("click", skipLeftDbl);
-mg_skip_right.addEventListener("click", skipRightDbl);
+mg_skip_left.addEventListener("touchend", skipLeftDbl);
+mg_skip_right.addEventListener("touchend", skipRightDbl);
 mg_skip_left_button.addEventListener("click", skipLeft);
 mg_skip_right_button.addEventListener("click", skipRight);
 mg_play_pause_full.addEventListener("dblclick", fullscreenOnOff);
 mg_play_pause_full.addEventListener("click", playPause);
-mg_play_pause.addEventListener("click", playPause);
+mg_play_pause.forEach((element) => {
+  element.addEventListener("click", playPause);
+});
 mg_sound_icon.addEventListener("click", soundOnOff);
 mg_sound_slider.addEventListener("input", measureSound);
 mg_settings_toggler.addEventListener("click", toggleSettings);
@@ -607,8 +622,10 @@ mouseTouchDragger();
 let sTimer;
 function contextClick(e) {
   e.preventDefault();
-  const xPos = e.offsetX;
-  const yPos = e.offsetY;
+  const parentElement = e.currentTarget;
+  const rect = parentElement.getBoundingClientRect();
+  const xPos = e.clientX - rect.left;
+  const yPos = e.clientY - rect.top;
   clearTimeout(sTimer);
   mg_context_menu.style.left = `${xPos}px`;
   mg_context_menu.style.top = `${yPos}px`;
@@ -732,6 +749,7 @@ function stoppedMoving() {
   mg_controls.classList.add("mg_controls_hidden");
   mg_player_eps.classList.add("mg_controls_hidden");
   mg_player.classList.add("mg_hide_cursor");
+  mg_play_pause_mobile.classList.add("mg_controls_hidden");
 
   closeEpisodes();
   closeSettings();
@@ -741,6 +759,7 @@ function startedMoving() {
   mg_controls.classList.remove("mg_controls_hidden");
   mg_player_eps.classList.remove("mg_controls_hidden");
   mg_player.classList.remove("mg_hide_cursor");
+  mg_play_pause_mobile.classList.remove("mg_controls_hidden");
 }
 function downloadMovie() {
   window.open(mg_video.src, "_blank");
@@ -944,12 +963,20 @@ function playPauseHand(command) {
 }
 
 function changeControls(string) {
-  if (string == "play") {
-    mg_play_.style.display = "none";
-    mg_pause_.style.display = "block";
-  } else if (string == "pause") {
-    mg_play_.style.display = "block";
-    mg_pause_.style.display = "none";
+  if (string === "play") {
+    mg_play_.forEach((element) => {
+      element.style.display = "none";
+    });
+    mg_pause_.forEach((element) => {
+      element.style.display = "block";
+    });
+  } else if (string === "pause") {
+    mg_play_.forEach((element) => {
+      element.style.display = "block";
+    });
+    mg_pause_.forEach((element) => {
+      element.style.display = "none";
+    });
   }
 }
 function changeSounds(string) {

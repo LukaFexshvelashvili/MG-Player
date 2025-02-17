@@ -1,3 +1,30 @@
+:root {
+  --main: #f5004f;
+  --mainhover: #ff0c59;
+}
+
+@font-face {
+  font-family: mbold;
+  src: url("./assets/OnService-Bold.ttf");
+}
+@font-face {
+  font-family: mmedium;
+  src: url("./assets/OnService-Medium.ttf");
+}
+@font-face {
+  font-family: mregular;
+  src: url("./assets/OnService-Regular.ttf");
+}
+@font-face {
+  font-family: msemibold;
+  src: url("./assets/OnService-SemiBold.ttf");
+}
+body {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
 input,
 textarea,
 button,
@@ -34,8 +61,8 @@ a {
      -moz-user-select: none;
           user-select: none;
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 500px;
+  aspect-ratio: 16/9;
   border-radius: 8px;
   background-color: black;
   overflow: hidden;
@@ -482,7 +509,7 @@ a {
   height: 100%;
   width: 100%;
 }
-.mg_play_pause #mg_pause_ {
+.mg_play_pause .mg_pause_ {
   display: none;
 }
 
@@ -681,7 +708,7 @@ a {
   background-color: var(--main);
 }
 .mg_player_eps .mg_player_eps_container .mg_player_eps_scroll .mg_ep_button_active:hover {
-  background-color: var(--mainHover);
+  background-color: var(--mainhover);
 }
 .mg_player_eps .mg_player_eps_container .mg_player_seasons_scroll {
   height: 100%;
@@ -736,7 +763,7 @@ a {
   background-color: var(--main);
 }
 .mg_player_eps .mg_player_eps_container .mg_player_seasons_scroll .mg_se_button_active:hover {
-  background-color: var(--mainHover);
+  background-color: var(--mainhover);
 }
 .mg_player_eps .mg_player_ep_button {
   display: flex;
@@ -760,7 +787,7 @@ a {
   opacity: 0;
 }
 .mg_player_eps .mg_player_ep_button:hover {
-  background-color: var(--mainHover);
+  background-color: var(--mainhover);
 }
 
 .mg_player_eps_scroll::-webkit-scrollbar {
@@ -779,24 +806,48 @@ a {
   background-color: var(--main);
 }
 
-@media (max-width: 950px) {
-  .mg_sound_mob {
-    display: block;
-  }
+.mg_play_pause_mobile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 50px;
+  transition: visibility 0.4s, opacity 0.4s;
 }
-@media (max-width: 700px) {
-  .mg_skip_left,
-  .mg_skip_right {
-    display: block;
-  }
+.mg_play_pause_mobile .mg_play_ {
+  transform: translateX(3px);
+}
+.mg_play_pause_mobile svg path {
+  fill: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 950px) {
   .mg_timeline_helper {
     height: 0;
     width: 0;
+    bottom: 15px;
   }
   .mg_timeline_helper video {
     display: none;
     height: 0%;
     width: 0%;
+  }
+  .mg_play_pause_full {
+    pointer-events: none;
+  }
+  .mg_sound_mob {
+    display: block;
+  }
+  .mg_skip_left,
+  .mg_skip_right {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
+    display: block;
   }
 }
 @media (max-width: 500px) {
@@ -834,10 +885,10 @@ a {
   #mg_sound_off_ {
     height: 18px;
   }
-  #mg_play_ {
+  .mg_play_ {
     height: 20px;
   }
-  #mg_pause_ {
+  .mg_pause_ {
     height: 20px;
   }
   #mg_fullscreen_on_ {
