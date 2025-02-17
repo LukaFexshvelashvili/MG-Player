@@ -50,6 +50,7 @@ mg_player.innerHTML = `      <div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_skip_right"></div>
 
       <div class="mg_play_pause_full"></div>
+      <div class="mg_play_pause_full mg_play_pause_full_mobile"></div>
       <div class="mg_play_pause mg_gtc mg_play_pause_mobile mg_controls_hidden">
         <svg class="mg_play_" viewBox="0 0 16 16">
           <path fill="white" opacity="0.9" d="M2 1v14l12-7z" />
@@ -278,6 +279,9 @@ const mg_loader = document.querySelector(".mg_loader");
 const mg_video = document.querySelector(".mg_video");
 const mg_main_play = document.querySelector(".mg_main_play");
 const mg_play_pause_full = document.querySelector(".mg_play_pause_full");
+const mg_play_pause_full_mobile = document.querySelector(
+  ".mg_play_pause_full_mobile"
+);
 
 // * PLAY PAUSE
 const mg_play_pause_mobile = document.querySelector(".mg_play_pause_mobile");
@@ -505,6 +509,7 @@ mg_skip_left_button.addEventListener("click", skipLeft);
 mg_skip_right_button.addEventListener("click", skipRight);
 mg_play_pause_full.addEventListener("dblclick", fullscreenOnOff);
 mg_play_pause_full.addEventListener("click", playPause);
+mg_play_pause_full_mobile.addEventListener("touchend", showhideControls);
 mg_play_pause.forEach((element) => {
   element.addEventListener("click", playPause);
 });
@@ -525,22 +530,41 @@ document.addEventListener("keydown", handleKeyPress);
 
 // ! MAIN FUNCTIONS
 
+function showhideControls(e) {
+  e.preventDefault();
+  if (mg_play_pause_mobile.classList.contains("mg_controls_hidden")) {
+    showControls();
+    mouseMoving();
+  } else {
+    mg_play_pause_mobile.classList.add("mg_controls_hidden");
+    hideControls();
+  }
+}
+function setLoading(state) {
+  if (state == true) {
+    mg_play_pause_mobile.classList.add("mg_play_pause_mobile_locked");
+    mg_loader.classList.remove("mg_loader_hidden");
+  } else {
+    mg_play_pause_mobile.classList.remove("mg_play_pause_mobile_locked");
+    mg_loader.classList.add("mg_loader_hidden");
+  }
+}
 // * WAITING
 mg_video.addEventListener("waiting", function () {
-  mg_loader.classList.remove("mg_loader_hidden");
+  setLoading(true);
 });
 mg_video.addEventListener("waitingforkey", () => {
-  mg_loader.classList.remove("mg_loader_hidden");
+  setLoading(true);
 });
 
 // * START
 mg_video.addEventListener("playing", () => {
   mg_error_block.classList.add("mg_error_block_hidden");
-  mg_loader.classList.add("mg_loader_hidden");
+  setLoading(false);
 });
 
 mg_video.addEventListener("canplaythrough", () => {
-  mg_loader.classList.add("mg_loader_hidden");
+  setLoading(false);
 });
 mg_video.addEventListener("loadeddata", function () {
   mg_error_block.classList.add("mg_error_block_hidden");
@@ -548,7 +572,7 @@ mg_video.addEventListener("loadeddata", function () {
   mg_video.currentTime = getLocaledTime.toFixed(6);
   measureTime(getLocaledTime);
   is_loaded = true;
-  mg_loader.classList.add("mg_loader_hidden");
+  setLoading(false);
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   mg_endtime.innerHTML = formatTime(mg_video.duration);
 });
@@ -733,19 +757,31 @@ function skipRight() {
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   measureTime(mg_video.currentTime);
 }
-function skipLeftDbl() {
-  dbClick(() => (mg_video.currentTime -= 10));
+function skipLeftDbl(e) {
+  e.preventDefault();
+  dbClick(
+    () => {
+      mg_video.currentTime -= 10;
+    },
+    () => showhideControls(e)
+  );
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   measureTime(mg_video.currentTime);
 }
 
-function skipRightDbl() {
-  dbClick(() => (mg_video.currentTime += 10));
+function skipRightDbl(e) {
+  e.preventDefault();
+  dbClick(
+    () => {
+      mg_video.currentTime += 10;
+    },
+    () => showhideControls(e)
+  );
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   measureTime(mg_video.currentTime);
 }
 
-function stoppedMoving() {
+function hideControls() {
   mg_controls.classList.add("mg_controls_hidden");
   mg_player_eps.classList.add("mg_controls_hidden");
   mg_player.classList.add("mg_hide_cursor");
@@ -755,11 +791,19 @@ function stoppedMoving() {
   closeSettings();
 }
 
-function startedMoving() {
+function showControls() {
   mg_controls.classList.remove("mg_controls_hidden");
   mg_player_eps.classList.remove("mg_controls_hidden");
   mg_player.classList.remove("mg_hide_cursor");
   mg_play_pause_mobile.classList.remove("mg_controls_hidden");
+}
+
+function stoppedMoving() {
+  hideControls();
+}
+
+function startedMoving() {
+  showControls();
 }
 function downloadMovie() {
   window.open(mg_video.src, "_blank");
@@ -1014,18 +1058,20 @@ function percentageToTime(percentage) {
   }
 }
 let clickCount = 0;
-function dbClick(callback) {
-  let timer;
-
+function dbClick(callback, callback2) {
   clickCount++;
+
   if (clickCount === 1) {
     timer = setTimeout(() => {
+      if (clickCount === 1) {
+        callback2();
+      }
       clickCount = 0;
     }, 300);
   } else if (clickCount === 2) {
     clearTimeout(timer);
-    clickCount = 0;
     callback();
+    clickCount = 0;
   }
 }
 function movetoFirstItem(array, fromIndex) {
