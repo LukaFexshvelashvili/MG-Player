@@ -601,14 +601,15 @@ mg_qualitiesChildrens.forEach((e) => {
         e.classList.add("mg_button_active");
     });
   });
-let clickCount = 0;
+let dbtimer,
+  clickCount = 0;
 function dbClick(e, n) {
   clickCount++,
     1 === clickCount
-      ? (timer = setTimeout(() => {
+      ? (dbtimer = setTimeout(() => {
           1 === clickCount && n(), (clickCount = 0);
         }, 300))
-      : 2 === clickCount && (clearTimeout(timer), e(), (clickCount = 0));
+      : 2 === clickCount && (clearTimeout(dbtimer), e(), (clickCount = 0));
 }
 function movetoFirstItem(e, n) {
   if (n < 0 || n >= e.length) return e;

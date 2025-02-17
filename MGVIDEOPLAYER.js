@@ -1058,18 +1058,19 @@ function percentageToTime(percentage) {
   }
 }
 let clickCount = 0;
+let dbtimer;
 function dbClick(callback, callback2) {
   clickCount++;
 
   if (clickCount === 1) {
-    timer = setTimeout(() => {
+    dbtimer = setTimeout(() => {
       if (clickCount === 1) {
         callback2();
       }
       clickCount = 0;
     }, 300);
   } else if (clickCount === 2) {
-    clearTimeout(timer);
+    clearTimeout(dbtimer);
     callback();
     clickCount = 0;
   }
