@@ -767,7 +767,7 @@ a {
   background-color: var(--main);
 }
 .mg_play_pause_mobile {
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -785,17 +785,20 @@ a {
   }
 }
 .mg_play_pause_mobile_locked {
-  display: none;
+  display: none !important;
 }
 .mg_play_pause_full_mobile {
   display: none;
   pointer-events: none;
 }
 @media (max-width: 950px) {
+  .mg_play_pause_mobile {
+    display: flex;
+  }
   .mg_timeline_helper {
     height: 0;
     width: 0;
-    bottom: 15px;
+    bottom: 25px;
     video {
       display: none;
       height: 0%;
