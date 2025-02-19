@@ -680,7 +680,10 @@ let isDragging = false;
 
 function onDraging(mouse) {
   if (isDragging) {
-    var getPer = (100 / mg_timeline_scaler.offsetWidth) * mouse.offsetX;
+    var getPer =
+      (100 / mg_timeline_scaler.offsetWidth) *
+      (mouse.clientX - mg_timeline_scaler.getBoundingClientRect().left);
+    mg_timeline_scaler;
     mg_time_indicator.style.width = getPer + "%";
 
     mg_video.currentTime = percentageToTime(getPer);
