@@ -796,8 +796,11 @@ a {
   gap: 5px;
 }
 .mg_player_eps .mg_player_eps_container .mg_player_seasons_scroll .mg_eps_closer {
+  position: sticky;
+  top: 0;
+  background-color: #1d1d1d;
   width: 100%;
-  height: 40px;
+  height: 50px;
   min-height: 40px;
   display: flex;
   justify-content: center;

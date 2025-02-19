@@ -1354,6 +1354,17 @@ function printSeasons() {
     item.addEventListener("click", () => {
       active_season = item.getAttribute("data-season");
       printEpisodes();
+      const episodeElement = mg_player_eps_scroll.querySelector(
+        `[data-ep="${active_episode}"]`
+      );
+      const curSE = getCurStorage().season;
+
+      if (episodeElement && curSE == active_season) {
+        mg_player_eps_scroll.scrollTop =
+          episodeElement.offsetTop - mg_player_eps_scroll.offsetTop - 100;
+      } else {
+        mg_player_eps_scroll.scrollTop = 0;
+      }
       mg_ses_childrens.forEach((k) =>
         k.classList.remove("mg_se_button_active")
       );
