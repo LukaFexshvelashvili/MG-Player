@@ -655,7 +655,7 @@ function mouseMoving() {
       if (
         !mg_video.paused &&
         !isDragging &&
-        mg_settings_block.classList.contains("mg_settings_block_hidden")
+        mg_settings_block.classList.contains("mg_settings_hidden")
       ) {
         stoppedMoving();
       }
@@ -762,6 +762,7 @@ mg_languagesChildrens.forEach((item) => {
       mg_languagesChildrens.forEach((k) =>
         k.classList.remove("mg_button_active")
       );
+
       item.classList.add("mg_button_active");
     }
   });
@@ -916,10 +917,12 @@ mg_settings_backs.forEach((setting_back) => {
 
 function closeSettings() {
   mg_settings_block.classList.add("mg_settings_hidden");
-  mg_settings_columns.forEach((item) =>
-    item.classList.add("mg_settings_column_hide")
-  );
-  mg_settings_columns[0].classList.remove("mg_settings_column_hide");
+  setTimeout(() => {
+    mg_settings_columns.forEach((item) =>
+      item.classList.add("mg_settings_column_hide")
+    );
+    mg_settings_columns[0].classList.remove("mg_settings_column_hide");
+  }, 200);
 }
 function fullscreenOnOff() {
   if (!isFullscreen()) {

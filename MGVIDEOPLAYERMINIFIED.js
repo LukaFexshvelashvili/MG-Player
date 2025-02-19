@@ -254,7 +254,7 @@ function mouseMoving() {
       (stoppedmove = !0),
         mg_video.paused ||
           isDragging ||
-          !mg_settings_block.classList.contains("mg_settings_block_hidden") ||
+          !mg_settings_block.classList.contains("mg_settings_hidden") ||
           stoppedMoving();
     }, 2500)));
 }
@@ -415,10 +415,12 @@ function toggleSettings() {
 }
 function closeSettings() {
   mg_settings_block.classList.add("mg_settings_hidden"),
-    mg_settings_columns.forEach((e) =>
-      e.classList.add("mg_settings_column_hide")
-    ),
-    mg_settings_columns[0].classList.remove("mg_settings_column_hide");
+    setTimeout(() => {
+      mg_settings_columns.forEach((e) =>
+        e.classList.add("mg_settings_column_hide")
+      ),
+        mg_settings_columns[0].classList.remove("mg_settings_column_hide");
+    }, 200);
 }
 function fullscreenOnOff() {
   isFullscreen()
