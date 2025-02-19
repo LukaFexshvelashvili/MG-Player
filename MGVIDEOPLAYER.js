@@ -376,6 +376,17 @@ const mg_player_eps_container = document.querySelector(
 );
 const mg_player_ep_button = document.querySelector(".mg_player_ep_button");
 const mg_eps_closer = document.querySelector(".mg_eps_closer");
+
+let FOCUSED = false;
+mg_player.addEventListener("click", () => {
+  FOCUSED = true;
+});
+
+document.addEventListener("click", (event) => {
+  if (!mg_player.contains(event.target)) {
+    FOCUSED = false;
+  }
+});
 let active_season = null;
 let active_episode = null;
 
@@ -780,6 +791,7 @@ mg_speed_button.forEach((item) => {
   });
 });
 function handleKeyPress(event) {
+  if (!FOCUSED) return;
   switch (event.key) {
     case "ArrowLeft":
       mg_video.currentTime -= 10;
