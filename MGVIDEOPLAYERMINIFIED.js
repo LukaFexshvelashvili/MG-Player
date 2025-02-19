@@ -56,6 +56,13 @@ const mg_error_block = document.querySelector(".mg_error_block"),
   mg_player_eps_container = document.querySelector(".mg_player_eps_container"),
   mg_player_ep_button = document.querySelector(".mg_player_ep_button"),
   mg_eps_closer = document.querySelector(".mg_eps_closer");
+let FOCUSED = !1;
+mg_player.addEventListener("click", () => {
+  FOCUSED = !0;
+}),
+  document.addEventListener("click", (e) => {
+    mg_player.contains(e.target) || (FOCUSED = !1);
+  });
 let mg_main_controls,
   active_season = null,
   active_episode = null;
@@ -320,28 +327,29 @@ mouseTouchDragger(),
 const mg_qualitiesChildrens = Array.from(mg_qualities.children),
   mg_languagesChildrens = Array.from(mg_languages.children);
 function handleKeyPress(e) {
-  switch (e.key) {
-    case "ArrowLeft":
-      (mg_video.currentTime -= 10),
-        (mg_starttime.innerHTML = formatTime(mg_video.currentTime));
-      break;
-    case "ArrowRight":
-      (mg_video.currentTime += 10),
-        (mg_starttime.innerHTML = formatTime(mg_video.currentTime));
-      break;
-    case "ArrowUp":
-      soundUp();
-      break;
-    case "ArrowDown":
-      soundDown();
-      break;
-    case "f":
-    case "F":
-      fullscreenOnOff();
-      break;
-    case " ":
-      playPause(), e.preventDefault();
-  }
+  if (FOCUSED)
+    switch (e.key) {
+      case "ArrowLeft":
+        (mg_video.currentTime -= 10),
+          (mg_starttime.innerHTML = formatTime(mg_video.currentTime));
+        break;
+      case "ArrowRight":
+        (mg_video.currentTime += 10),
+          (mg_starttime.innerHTML = formatTime(mg_video.currentTime));
+        break;
+      case "ArrowUp":
+        soundUp();
+        break;
+      case "ArrowDown":
+        soundDown();
+        break;
+      case "f":
+      case "F":
+        fullscreenOnOff();
+        break;
+      case " ":
+        playPause(), e.preventDefault();
+    }
 }
 function playerClick(e) {
   mouseMoving(),

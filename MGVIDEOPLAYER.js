@@ -1150,6 +1150,7 @@ function firstStart() {
   mg_video.play();
   mg_main_play.parentNode.removeChild(mg_main_play);
   is_started = true;
+  FOCUSED = true;
   changeControls("play");
 }
 
