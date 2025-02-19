@@ -1231,11 +1231,13 @@ function getCheckOfControls() {
   let chosedQuality = mg_main_controls.quality == "SD" ? "SD" : "HD";
   if (
     mg_main_controls.lang == "GEO" &&
+    MG_PLAYER.languages.GEO &&
     MG_PLAYER.languages.GEO[chosedQuality]
   ) {
     InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
   } else if (
     mg_main_controls.lang == "ENG" &&
+    MG_PLAYER.languages.ENG &&
     MG_PLAYER.languages.ENG[chosedQuality]
   ) {
     chosedLang = "ENG";
@@ -1247,6 +1249,7 @@ function getCheckOfControls() {
     InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
   } else if (
     mg_main_controls.lang == "SD" &&
+    MG_PLAYER.languages[chosedLang] &&
     MG_PLAYER.languages[chosedLang].SD
   ) {
     InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
