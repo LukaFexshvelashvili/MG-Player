@@ -1,6 +1,6 @@
 // * MAIN
 const mg_player = document.querySelector(".mg_player");
-mg_player.innerHTML = `      <div class="mg_player_eps mg_player_eps_hidden">
+mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
         <div class="mg_player_ep_button">ეპიზოდები</div>
         <div class="mg_player_eps_container">
           <div class="mg_player_eps_scroll"></div>
@@ -25,7 +25,7 @@ mg_player.innerHTML = `      <div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_error_block mg_error_hidden">
         <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეერით</div>
       </div>
-      <div class="mg_context_menu">MG PLAYER V3.2</div>
+      <div class="mg_context_menu">MG PLAYER V3.3</div>
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
@@ -184,23 +184,39 @@ mg_player.innerHTML = `      <div class="mg_player_eps mg_player_eps_hidden">
               </div>
               <div class="mg_settings mg_gtc">
                 <div class="mg_settings_block mg_settings_hidden">
-                  <div class="mg_cols">
-                    <p>ხარისხი</p>
-                    <div class="mg_qualities"></div>
+                  <div class="mg_settings_column mg_settings_starter">
+                    <button class="mg_setting_choose" data-col-index="1">
+                      ენა<span id="active_setting_language">GEO</span></button
+                    ><button class="mg_setting_choose" data-col-index="2">
+                      ხარისხი<span id="active_setting_quality">HD</span></button
+                    ><button class="mg_setting_choose" data-col-index="3">
+                      სისწრაფე<span id="active_setting_speed">1</span>
+                    </button>
                   </div>
-                  <div class="mg_cols">
-                    <p>ენა</p>
+                  <div
+                    class="mg_settings_column mg_settings_languages mg_settings_column_hide"
+                  >
+                    <button class="mg_settings_back">უკან</button>
                     <div class="mg_languages"></div>
                   </div>
-                  <div class="mg_cols">
-                    <p>სისწრაფე</p>
-                    <div class="mg_button mg_speed_button">1.5</div>
-                    <div class="mg_button mg_speed_button">1.25</div>
-                    <div class="mg_button mg_speed_button mg_button_active">
-                      1
+                  <div
+                    class="mg_settings_column mg_settings_qualities mg_settings_column_hide"
+                  >
+                    <button class="mg_settings_back">უკან</button>
+                    <div class="mg_qualities"></div>
+                  </div>
+
+                  <div
+                    class="mg_settings_column mg_settings_speed mg_settings_column_hide"
+                  >
+                    <button class="mg_settings_back">უკან</button>
+                    <div class="mg_speed">
+                      <div class="mg_speed_button">1.5</div>
+                      <div class="mg_speed_button">1.25</div>
+                      <div class="mg_speed_button">1</div>
+                      <div class="mg_speed_button">0.75</div>
+                      <div class="mg_speed_button">0.5</div>
                     </div>
-                    <div class="mg_button mg_speed_button">0.75</div>
-                    <div class="mg_button mg_speed_button">0.5</div>
                   </div>
                 </div>
                 <svg
@@ -325,6 +341,17 @@ const mg_controls = document.querySelector(".mg_controls");
 const mg_download = document.querySelector(".mg_download");
 const mg_frame = document.querySelector(".mg_frame");
 const mg_settings_block = document.querySelector(".mg_settings_block");
+const mg_settings_columns = document.querySelectorAll(".mg_settings_column");
+const mg_settings_backs = document.querySelectorAll(".mg_settings_back");
+const mg_setting_chooses = document.querySelectorAll(".mg_setting_choose");
+const active_setting_language = document.querySelector(
+  "#active_setting_language"
+);
+const active_setting_quality = document.querySelector(
+  "#active_setting_quality"
+);
+const active_setting_speed = document.querySelector("#active_setting_speed");
+
 const mg_settings_toggler = document.querySelector("#mg_settings_toggler");
 
 // * TIMESKIPS
@@ -382,6 +409,16 @@ function changeVideoUrl(url) {
 
 if (localStorage.getItem("mg_player_controls")) {
   mg_main_controls = JSON.parse(localStorage.getItem("mg_player_controls"));
+
+  active_setting_language.innerText = mg_main_controls.lang
+    ? mg_main_controls.lang.toString()
+    : "GEO";
+  active_setting_quality.innerText = mg_main_controls.quality
+    ? mg_main_controls.quality.toString()
+    : "HD";
+  active_setting_speed.innerText = mg_main_controls.speed
+    ? mg_main_controls.speed.toString()
+    : "1";
 } else {
   mg_main_controls = { lang: "GEO", volume: 1, speed: 1, quality: "HD" };
   localStorage.setItem("mg_player_controls", JSON.stringify(mg_main_controls));
@@ -543,7 +580,7 @@ document.addEventListener("keydown", handleKeyPress);
 // ! MAIN FUNCTIONS
 
 function showhideControls(e) {
-  e.preventDefault();
+  // e.preventDefault();
   if (mg_play_pause_mobile.classList.contains("mg_controls_hidden")) {
     showControls();
     mouseMoving();
@@ -615,10 +652,14 @@ function mouseMoving() {
     }
     moveTimeout = setTimeout(() => {
       stoppedmove = true;
-      if (!mg_video.paused) {
+      if (
+        !mg_video.paused &&
+        !isDragging &&
+        mg_settings_block.classList.contains("mg_settings_block_hidden")
+      ) {
         stoppedMoving();
       }
-    }, 2000);
+    }, 2500);
   }
 }
 
@@ -641,6 +682,8 @@ function onDraging(mouse) {
   if (isDragging) {
     var getPer = (100 / mg_timeline_scaler.offsetWidth) * mouse.offsetX;
     mg_time_indicator.style.width = getPer + "%";
+
+    mg_video.currentTime = percentageToTime(getPer);
   }
 }
 function onDragingTouch(event) {
@@ -678,46 +721,58 @@ const mg_languagesChildrens = Array.from(mg_languages.children);
 
 mg_qualitiesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
-    var saveTime = mg_video.currentTime;
-    var saveState = mg_video.paused;
-    InitializeVideo(MG_PLAYER.languages[mg_main_controls.lang][item.innerText]);
+    if (!item.classList.contains("mg_button_active")) {
+      var saveTime = mg_video.currentTime;
+      var saveState = mg_video.paused;
+      InitializeVideo(
+        MG_PLAYER.languages[mg_main_controls.lang][item.innerText]
+      );
 
-    saveControls({ quality: item.innerText });
-
-    mg_video.currentTime = saveTime.toFixed(6);
-    if (saveState == false) {
-      mg_video.play();
+      saveControls({ quality: item.innerText });
+      active_setting_quality.innerText = item.innerText;
+      mg_video.currentTime = saveTime.toFixed(6);
+      if (saveState == false) {
+        mg_video.play();
+      }
+      mg_qualitiesChildrens.forEach((k) =>
+        k.classList.remove("mg_button_active")
+      );
+      item.classList.add("mg_button_active");
     }
-    mg_qualitiesChildrens.forEach((k) =>
-      k.classList.remove("mg_button_active")
-    );
-    item.classList.add("mg_button_active");
   });
 });
 mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
-    var saveTime = mg_video.currentTime;
-    var saveState = mg_video.paused;
-    InitializeVideo(
-      MG_PLAYER.languages[item.innerText][mg_main_controls.quality]
-    );
-    saveControls({ lang: item.innerText });
-    mg_video.currentTime = saveTime.toFixed(6);
-    if (saveState == false) {
-      mg_video.play();
+    if (!item.classList.contains("mg_button_active")) {
+      var saveTime = mg_video.currentTime;
+      var saveState = mg_video.paused;
+      InitializeVideo(
+        MG_PLAYER.languages[item.innerText][mg_main_controls.quality]
+      );
+      saveControls({ lang: item.innerText });
+      active_setting_language.innerText = item.innerText;
+
+      mg_video.currentTime = saveTime.toFixed(6);
+      if (saveState == false) {
+        mg_video.play();
+      }
+      mg_languagesChildrens.forEach((k) =>
+        k.classList.remove("mg_button_active")
+      );
+      item.classList.add("mg_button_active");
     }
-    mg_languagesChildrens.forEach((k) =>
-      k.classList.remove("mg_button_active")
-    );
-    item.classList.add("mg_button_active");
   });
 });
 mg_speed_button.forEach((item) => {
   item.addEventListener("click", () => {
-    mg_video.playbackRate = item.innerText;
-    mg_speed_button.forEach((k) => k.classList.remove("mg_button_active"));
-    saveControls({ speed: item.innerText });
-    item.classList.add("mg_button_active");
+    if (!item.classList.contains("mg_button_active")) {
+      mg_video.playbackRate = item.innerText;
+      mg_speed_button.forEach((k) => k.classList.remove("mg_button_active"));
+      saveControls({ speed: item.innerText });
+      active_setting_speed.innerText = item.innerText;
+
+      item.classList.add("mg_button_active");
+    }
   });
 });
 function handleKeyPress(event) {
@@ -795,11 +850,15 @@ function skipRightDbl(e) {
 
 function hideControls() {
   mg_controls.classList.add("mg_controls_hidden");
-  mg_player_eps.classList.add("mg_controls_hidden");
+  if (
+    !mg_player_eps_container.classList.contains("mg_player_eps_container_show")
+  ) {
+    mg_player_eps.classList.add("mg_controls_hidden");
+    closeEpisodes();
+  }
   mg_player.classList.add("mg_hide_cursor");
   mg_play_pause_mobile.classList.add("mg_controls_hidden");
 
-  closeEpisodes();
   closeSettings();
 }
 
@@ -832,8 +891,32 @@ async function togglePIP() {
 function toggleSettings() {
   mg_settings_block.classList.toggle("mg_settings_hidden");
 }
+mg_setting_chooses.forEach((setting_choose) => {
+  setting_choose.addEventListener("click", () => {
+    mg_settings_columns.forEach((item) =>
+      item.classList.add("mg_settings_column_hide")
+    );
+
+    mg_settings_columns[
+      parseInt(setting_choose.getAttribute("data-col-index"))
+    ].classList.remove("mg_settings_column_hide");
+  });
+});
+mg_settings_backs.forEach((setting_back) => {
+  setting_back.addEventListener("click", () => {
+    mg_settings_columns.forEach((item) =>
+      item.classList.add("mg_settings_column_hide")
+    );
+    mg_settings_columns[0].classList.remove("mg_settings_column_hide");
+  });
+});
+
 function closeSettings() {
   mg_settings_block.classList.add("mg_settings_hidden");
+  mg_settings_columns.forEach((item) =>
+    item.classList.add("mg_settings_column_hide")
+  );
+  mg_settings_columns[0].classList.remove("mg_settings_column_hide");
 }
 function fullscreenOnOff() {
   if (!isFullscreen()) {
@@ -897,6 +980,7 @@ function seeTimeTouch(event) {
       mg_timeline_scaler.getBoundingClientRect().left -
       mg_timeline_helper.offsetWidth / 2
     }px)`;
+
     const vidTime = percentageToTime(getPer);
     mg_timeline_helper_time.innerHTML = formatTime(vidTime);
     mg_helper_video.currentTime = vidTime.toFixed(6);
@@ -1063,10 +1147,10 @@ function formatTime(seconds) {
     : `${mins}:${String(secs).padStart(2, "0")}`;
 }
 function percentageToTime(percentage) {
-  if (mg_video.duration) {
+  if (mg_video.duration && percentage) {
     return (mg_video.duration / 100) * percentage;
   } else {
-    return null;
+    return mg_video.currentTime;
   }
 }
 let clickCount = 0;
@@ -1162,10 +1246,19 @@ function saveControls({ lang, volume, speed, quality }) {
     let mg_save_ = localStorage.getItem("mg_player_controls");
     let mg_player_controls = JSON.parse(mg_save_);
 
-    mg_player_controls.lang = lang ?? mg_player_controls.lang;
     mg_player_controls.volume = volume ?? mg_player_controls.volume;
-    mg_player_controls.speed = speed ?? mg_player_controls.speed;
+    mg_player_controls.lang = lang ?? mg_player_controls.lang;
     mg_player_controls.quality = quality ?? mg_player_controls.quality;
+    mg_player_controls.speed = speed ?? mg_player_controls.speed;
+    active_setting_language.innerText = lang
+      ? mg_player_controls.lang.toString()
+      : "GEO";
+    active_setting_quality.innerText = quality
+      ? mg_player_controls.quality.toString()
+      : "HD";
+    active_setting_speed.innerText = speed
+      ? mg_player_controls.speed.toString()
+      : "1";
     localStorage.setItem(
       "mg_player_controls",
       JSON.stringify(mg_player_controls)
@@ -1179,39 +1272,39 @@ function mouseTouchDragger() {
   mg_timeline_scaler.addEventListener("mousedown", function () {
     isDragging = true;
     time_measuring = false;
-    mg_timeline_scaler.addEventListener("mousemove", onDraging);
+    document.addEventListener("mousemove", onDraging);
   });
-  mg_timeline_scaler.addEventListener("mouseup", function () {
+  document.addEventListener("mouseup", function () {
     if (isDragging) {
       isDragging = false;
       time_measuring = true;
 
-      mg_timeline_scaler.removeEventListener("mousemove", onDraging);
-    }
-  });
-  mg_timeline_scaler.addEventListener("mouseleave", function () {
-    if (isDragging) {
-      isDragging = false;
-      time_measuring = true;
-
-      mg_timeline_scaler.removeEventListener("mousemove", onDraging);
+      document.removeEventListener("mousemove", onDraging);
     }
   });
 
   // TOUCH (MOBILE)
-  mg_timeline_scaler.addEventListener("touchstart", function (event) {
-    event.preventDefault();
+  mg_timeline_scaler.addEventListener(
+    "touchstart",
+    function (event) {
+      // event.preventDefault();
 
-    isDragging = true;
-    time_measuring = false;
+      isDragging = true;
+      time_measuring = false;
 
-    let touch = event.touches[0];
-    onDraging(touch);
+      let touch = event.touches[0];
+      onDraging(touch);
 
-    mg_timeline_scaler.addEventListener("touchmove", onDragingTouch);
-  });
+      mg_timeline_scaler.addEventListener("touchmove", onDragingTouch, {
+        passive: true,
+      });
+    },
+    {
+      passive: true,
+    }
+  );
 
-  mg_timeline_scaler.addEventListener("touchend", function () {
+  document.addEventListener("touchend", function () {
     if (isDragging) {
       isDragging = false;
       time_measuring = true;
@@ -1219,13 +1312,13 @@ function mouseTouchDragger() {
     }
   });
 
-  mg_timeline_scaler.addEventListener("touchcancel", function () {
-    if (isDragging) {
-      isDragging = false;
-      time_measuring = true;
-      mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
-    }
-  });
+  // mg_timeline_scaler.addEventListener("touchcancel", function () {
+  //   if (isDragging) {
+  //     isDragging = false;
+  //     time_measuring = true;
+  //     mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
+  //   }
+  // });
 }
 
 // * FOR EPISODES
