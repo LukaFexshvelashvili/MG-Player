@@ -25,7 +25,7 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_error_block mg_error_hidden">
         <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეერით</div>
       </div>
-      <div class="mg_context_menu">MG PLAYER V3.3</div>
+      <div class="mg_context_menu">MG PLAYER V3.4</div>
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
@@ -387,8 +387,9 @@ document.addEventListener("click", (event) => {
     FOCUSED = false;
   }
 });
-let active_season = null;
-let active_episode = null;
+
+let active_season = MG_PLAYER.seasons ? Object.keys(MG_PLAYER.seasons)[0] : 1;
+let active_episode = 1;
 
 function InitializeVideo(videoUrl) {
   if (videoUrl.includes(".m3u8")) {
@@ -451,82 +452,7 @@ function initializePlayer() {
   mg_video_thumbnail.src = MG_PLAYER.image;
 
   // TODO TIMESAVES / GETTIMES
-  if (localStorage.getItem("mg_player")) {
-    let mg_save_ = localStorage.getItem("mg_player");
-    let mg_save = JSON.parse(mg_save_);
-    let get_cur = mg_save.filter((item) => {
-      return item.id == MG_PLAYER.id;
-    });
-    if (get_cur.length !== 0) {
-      movetoFirstItem(
-        mg_save,
-        mg_save.findIndex((item) => item.id == get_cur[0].id)
-      );
-      if (MG_PLAYER.type == "SERIES") {
-        if (
-          get_cur[0].season <= Object.keys(MG_PLAYER.seasons).length &&
-          get_cur[0].episode <= MG_PLAYER.seasons[get_cur[0].season].length
-        ) {
-          active_season = get_cur[0].season;
-          active_episode = get_cur[0].episode;
-
-          // SCROLL ON ACTIVE EP AND SEASON
-          setTimeout(() => {
-            const seasonElement = mg_player_seasons.querySelector(
-              `[data-season="${get_cur[0]?.season}"]`
-            );
-            const episodeElement = mg_player_eps_scroll.querySelector(
-              `[data-ep="${get_cur[0]?.episode}"]`
-            );
-
-            if (seasonElement && mg_player_seasons) {
-              mg_player_seasons.scrollTop =
-                seasonElement.offsetTop - mg_player_seasons.offsetTop - 100;
-            }
-
-            if (episodeElement && mg_player_eps_scroll) {
-              mg_player_eps_scroll.scrollTop =
-                episodeElement.offsetTop - mg_player_eps_scroll.offsetTop - 100;
-            }
-          }, 0);
-
-          changeInitialEpisode(getEpisodeRequest());
-        } else {
-          active_season = 1;
-          active_episode = 1;
-
-          mg_save[0].id = MG_PLAYER.id;
-          mg_save[0].time = 0;
-          mg_save[0].episode = 1;
-          mg_save[0].season = 1;
-          localStorage.setItem("mg_player", JSON.stringify(mg_save));
-        }
-      }
-      cutIfTooLarge(mg_save, 5);
-      localStorage.setItem("mg_player", JSON.stringify(mg_save));
-    } else {
-      if (MG_PLAYER.type == "SERIES") {
-        mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
-      } else {
-        mg_save.unshift({ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 });
-      }
-      cutIfTooLarge(mg_save, 5);
-      localStorage.setItem("mg_player", JSON.stringify(mg_save));
-    }
-  } else {
-    if (MG_PLAYER.type == "SERIES") {
-      localStorage.setItem(
-        "mg_player",
-        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
-      );
-    } else {
-      localStorage.setItem(
-        "mg_player",
-        JSON.stringify([{ id: MG_PLAYER.id, time: 0, episode: 1, season: 1 }])
-      );
-    }
-  }
-
+  handleLocalStorage();
   for (const [quality] of Object.entries(
     MG_PLAYER.languages[mg_main_controls.lang]
   )) {
@@ -1336,14 +1262,6 @@ function mouseTouchDragger() {
       mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
     }
   });
-
-  // mg_timeline_scaler.addEventListener("touchcancel", function () {
-  //   if (isDragging) {
-  //     isDragging = false;
-  //     time_measuring = true;
-  //     mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
-  //   }
-  // });
 }
 
 // * FOR EPISODES
@@ -1495,5 +1413,86 @@ function getCurStorage() {
     return get_cur[0];
   } else {
     return null;
+  }
+}
+
+function handleLocalStorage() {
+  if (localStorage.getItem("mg_player")) {
+    let mg_save_ = localStorage.getItem("mg_player");
+    let mg_save = JSON.parse(mg_save_);
+    let get_cur = mg_save.filter((item) => item.id == MG_PLAYER.id);
+    if (get_cur.length !== 0) {
+      movetoFirstItem(
+        mg_save,
+        mg_save.findIndex((item) => item.id == get_cur[0].id)
+      );
+      if (MG_PLAYER.type == "SERIES") {
+        if (
+          Object.keys(MG_PLAYER.seasons).includes(get_cur[0].season) &&
+          get_cur[0].episode >= 0 &&
+          get_cur[0].episode <= MG_PLAYER.seasons[get_cur[0].season].length
+        ) {
+          active_season = get_cur[0].season;
+          active_episode = get_cur[0].episode;
+
+          // SCROLL ON ACTIVE EP AND SEASON
+          setTimeout(() => {
+            const seasonElement = mg_player_seasons.querySelector(
+              `[data-season="${get_cur[0]?.season}"]`
+            );
+            const episodeElement = mg_player_eps_scroll.querySelector(
+              `[data-ep="${get_cur[0]?.episode}"]`
+            );
+
+            if (seasonElement && mg_player_seasons) {
+              mg_player_seasons.scrollTop =
+                seasonElement.offsetTop - mg_player_seasons.offsetTop - 100;
+            }
+
+            if (episodeElement && mg_player_eps_scroll) {
+              mg_player_eps_scroll.scrollTop =
+                episodeElement.offsetTop - mg_player_eps_scroll.offsetTop - 100;
+            }
+          }, 0);
+
+          changeInitialEpisode(getEpisodeRequest());
+        } else {
+          mg_save[0].id = MG_PLAYER.id;
+          mg_save[0].time = 0;
+          mg_save[0].episode = 1;
+          mg_save[0].season = active_season;
+          localStorage.setItem("mg_player", JSON.stringify(mg_save));
+        }
+      }
+      cutIfTooLarge(mg_save, 5);
+      localStorage.setItem("mg_player", JSON.stringify(mg_save));
+    } else {
+      if (MG_PLAYER.type == "SERIES") {
+        mg_save.unshift({
+          id: MG_PLAYER.id,
+          time: 0,
+          episode: 1,
+          season: active_season,
+        });
+      } else {
+        mg_save.unshift({ id: MG_PLAYER.id, time: 0 });
+      }
+      cutIfTooLarge(mg_save, 5);
+      localStorage.setItem("mg_player", JSON.stringify(mg_save));
+    }
+  } else {
+    if (MG_PLAYER.type == "SERIES") {
+      localStorage.setItem(
+        "mg_player",
+        JSON.stringify([
+          { id: MG_PLAYER.id, time: 0, episode: 1, season: active_season },
+        ])
+      );
+    } else {
+      localStorage.setItem(
+        "mg_player",
+        JSON.stringify([{ id: MG_PLAYER.id, time: 0 }])
+      );
+    }
   }
 }
