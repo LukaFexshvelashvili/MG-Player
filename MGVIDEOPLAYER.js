@@ -410,6 +410,7 @@ function InitializeVideo(videoUrl) {
   } else {
     changeVideoUrl(videoUrl);
   }
+  mg_video.playbackRate = mg_main_controls.speed;
 }
 
 let mg_main_controls;
@@ -1153,44 +1154,36 @@ function getSavedTime() {
 }
 
 function getCheckOfControls() {
-  let chosedLang = mg_main_controls.lang == "ENG" ? "ENG" : "GEO";
-  let chosedQuality = mg_main_controls.quality == "SD" ? "SD" : "HD";
-  if (
-    mg_main_controls.lang == "GEO" &&
-    MG_PLAYER.languages.GEO &&
-    MG_PLAYER.languages.GEO[chosedQuality]
-  ) {
-    InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
-  } else if (
-    mg_main_controls.lang == "ENG" &&
-    MG_PLAYER.languages.ENG &&
-    MG_PLAYER.languages.ENG[chosedQuality]
-  ) {
-    chosedLang = "ENG";
-    InitializeVideo(MG_PLAYER.languages.ENG[chosedQuality]);
-  } else {
-    InitializeVideo(MG_PLAYER.languages.GEO[chosedQuality]);
-  }
-  if (mg_main_controls.quality == "HD" && MG_PLAYER.languages[chosedLang].HD) {
-    InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
-  } else if (
-    mg_main_controls.lang == "SD" &&
-    MG_PLAYER.languages[chosedLang] &&
-    MG_PLAYER.languages[chosedLang].SD
-  ) {
-    InitializeVideo(MG_PLAYER.languages[chosedLang].SD);
-  } else {
-    InitializeVideo(MG_PLAYER.languages[chosedLang].HD);
-  }
+  mg_main_controls.lang = MG_PLAYER.languages[mg_main_controls.lang]
+    ? mg_main_controls.lang
+    : "GEO";
+
+  mg_main_controls.quality = MG_PLAYER.languages[mg_main_controls.lang]?.[
+    mg_main_controls.quality
+  ]
+    ? mg_main_controls.quality
+    : "HD";
+
+  let selectedVideo =
+    MG_PLAYER.languages[mg_main_controls.lang]?.[mg_main_controls.quality] ||
+    MG_PLAYER.languages.GEO?.[mg_main_controls.quality] ||
+    MG_PLAYER.languages.GEO?.HD;
 
   mg_speed_button.forEach((item) => {
     if (item.innerHTML.trim() == mg_main_controls.speed) {
-      mg_video.playbackRate = item.innerHTML.trim();
       mg_speed_button.forEach((k) => k.classList.remove("mg_button_active"));
       item.classList.add("mg_button_active");
     }
   });
+
   measureSoundHand(mg_main_controls.volume);
+  saveControls({
+    lang: mg_main_controls.lang,
+    quality: mg_main_controls.quality,
+    volume: mg_main_controls.volume,
+    speed: mg_main_controls.speed,
+  });
+  InitializeVideo(selectedVideo);
 }
 function saveControls({ lang, volume, speed, quality }) {
   if (localStorage.getItem("mg_player_controls")) {
@@ -1428,7 +1421,9 @@ function handleLocalStorage() {
       );
       if (MG_PLAYER.type == "SERIES") {
         if (
-          Object.keys(MG_PLAYER.seasons).includes(get_cur[0].season) &&
+          Object.keys(MG_PLAYER.seasons).includes(
+            get_cur[0].season.toString()
+          ) &&
           get_cur[0].episode >= 0 &&
           get_cur[0].episode <= MG_PLAYER.seasons[get_cur[0].season].length
         ) {
