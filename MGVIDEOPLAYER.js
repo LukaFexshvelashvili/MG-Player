@@ -23,7 +23,7 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
         </div>
       </div>
       <div class="mg_error_block mg_error_hidden">
-        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეერით</div>
+        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეიერით</div>
       </div>
       <div class="mg_context_menu">MG PLAYER V3.4</div>
       <div class="mg_loader mg_gtc mg_loader_hidden">
@@ -578,9 +578,7 @@ mg_video.addEventListener("timeupdate", function () {
 mg_video.addEventListener("error", function () {
   mg_error_block.classList.remove("mg_error_hidden");
 });
-mg_video.addEventListener("stalled", function () {
-  mg_error_block.classList.remove("mg_error_hidden");
-});
+
 let moveTimeout;
 function mouseMoving() {
   if (is_started) {
