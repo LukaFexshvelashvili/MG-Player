@@ -29,7 +29,7 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
-      <video class="mg_video"></video>
+      <video preload="auto" class="mg_video"></video>
       <div class="mg_main_play">
         <img class="mg_video_thumbnail" />
         <div class="mg_play_icon">
@@ -400,12 +400,12 @@ function InitializeVideo(videoUrl) {
 
       hls.on(Hls.Events.MANIFEST_PARSED, function () {});
       hls.on(Hls.Events.ERROR, function () {
-        mg_error_block.classList.remove("mg_error_block_hidden");
+        mg_error_block.classList.remove("mg_error_hidden");
       });
     } else if (mg_video.canPlayType("application/vnd.apple.mpegurl")) {
       changeVideoUrl(videoUrl);
     } else {
-      mg_error_block.classList.remove("mg_error_block_hidden");
+      mg_error_block.classList.remove("mg_error_hidden");
     }
   } else {
     changeVideoUrl(videoUrl);
@@ -546,7 +546,7 @@ mg_video.addEventListener("waitingforkey", () => {
 
 // * START
 mg_video.addEventListener("playing", () => {
-  mg_error_block.classList.add("mg_error_block_hidden");
+  mg_error_block.classList.add("mg_error_hidden");
   setLoading(false);
 });
 
@@ -554,7 +554,7 @@ mg_video.addEventListener("canplaythrough", () => {
   setLoading(false);
 });
 mg_video.addEventListener("loadeddata", function () {
-  mg_error_block.classList.add("mg_error_block_hidden");
+  mg_error_block.classList.add("mg_error_hidden");
   let getLocaledTime = getSavedTime();
   mg_video.currentTime = getLocaledTime.toFixed(6);
   measureTime(getLocaledTime);
@@ -576,10 +576,10 @@ mg_video.addEventListener("timeupdate", function () {
 });
 // * ERROR
 mg_video.addEventListener("error", function () {
-  mg_error_block.classList.remove("mg_error_block_hidden");
+  mg_error_block.classList.remove("mg_error_hidden");
 });
 mg_video.addEventListener("stalled", function () {
-  mg_error_block.classList.remove("mg_error_block_hidden");
+  mg_error_block.classList.remove("mg_error_hidden");
 });
 let moveTimeout;
 function mouseMoving() {
@@ -826,11 +826,14 @@ function downloadMovie() {
 async function togglePIP() {
   if (document.pictureInPictureElement) {
     await document.exitPictureInPicture();
+    playPause("pause");
   } else {
     await mg_video.requestPictureInPicture();
   }
 }
-
+document.addEventListener("leavepictureinpicture", () => {
+  playPause("pause");
+});
 function toggleSettings() {
   mg_settings_block.classList.toggle("mg_settings_hidden");
 }
@@ -1322,7 +1325,7 @@ function printEpisodes() {
   mg_eps_childrens.forEach((item) => {
     item.addEventListener("click", () => {
       active_episode = item.getAttribute("data-ep");
-      mg_error_block.classList.add("mg_error_block_hidden");
+      mg_error_block.classList.add("mg_error_hidden");
       changeEpisode(getEpisodeRequest());
       mg_eps_childrens.forEach((k) =>
         k.classList.remove("mg_ep_button_active")

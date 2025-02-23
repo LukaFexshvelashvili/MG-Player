@@ -1,6 +1,8 @@
 :root {
   --main: #f5004f;
+  --mainclear: rgba(245, 0, 78, 0.1);
   --mainhover: #ff0c59;
+  --texthead: rgba(255, 255, 255, 0.9);
 }
 
 @font-face {
@@ -78,27 +80,29 @@ a {
   position: absolute;
   height: 100%;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
   top: 0;
   left: 0;
-  z-index: 6;
+  z-index: 5;
 }
 .mg_error_block .mg_error {
   display: flex;
   justify-content: center;
   align-items: center;
   transform: translateZ(0);
-  color: var(--main);
-  height: 120px;
+  color: var(--texthead);
   padding: 15px;
   width: 320px;
   border-radius: 10px;
   text-align: center;
+  font-feature-settings: "case";
   font-family: msemibold;
   line-height: 26px;
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
   font-size: 16px;
   letter-spacing: 1px;
-  background-color: rgb(18, 0, 6);
+  background-color: var(--main);
 }
 
 .mg_error_hidden {
@@ -726,7 +730,7 @@ a {
   position: absolute;
   top: 0px;
   right: 0px;
-  z-index: 5;
+  z-index: 10;
   transition: visibility 0.1s, opacity 0.3s;
   height: 100%;
 }
