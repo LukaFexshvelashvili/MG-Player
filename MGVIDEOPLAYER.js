@@ -399,9 +399,6 @@ function InitializeVideo(videoUrl) {
       hls.attachMedia(mg_video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, function () {});
-      hls.on(Hls.Events.ERROR, function () {
-        mg_error_block.classList.remove("mg_error_hidden");
-      });
     } else if (mg_video.canPlayType("application/vnd.apple.mpegurl")) {
       changeVideoUrl(videoUrl);
     } else {
@@ -486,9 +483,7 @@ mg_skip_left_button.addEventListener("click", skipLeft);
 mg_skip_right_button.addEventListener("click", skipRight);
 mg_play_pause_full.addEventListener("dblclick", fullscreenOnOff);
 mg_play_pause_full.addEventListener("click", playPause);
-mg_play_pause_full_mobile.addEventListener("touchend", showhideControls, {
-  passive: true,
-});
+mg_play_pause_full_mobile.addEventListener("touchend", showhideControls);
 mg_play_pause.forEach((element) => {
   element.addEventListener("click", playPause);
 });
@@ -518,7 +513,7 @@ document.addEventListener("keydown", handleKeyPress);
 // ! MAIN FUNCTIONS
 
 function showhideControls(e) {
-  // e.preventDefault();
+  e.preventDefault();
   if (mg_play_pause_mobile.classList.contains("mg_controls_hidden")) {
     showControls();
     mouseMoving();
@@ -1254,6 +1249,8 @@ function mouseTouchDragger() {
       isDragging = false;
       time_measuring = true;
       mg_timeline_scaler.removeEventListener("touchmove", onDragingTouch);
+      mg_timeline_helper.style.opacity = 0;
+      mg_time_indicator_helper.style.width = "0%";
     }
   });
 }

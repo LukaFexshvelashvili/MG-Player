@@ -856,6 +856,18 @@ a {
   pointer-events: none;
 }
 @media (max-width: 950px) {
+  .mg_controls {
+    .mg_controls_bar {
+      padding: 0 15px;
+      .mg_timeline_scaler {
+        &:hover {
+          .mg_timeline {
+            height: 4px;
+          }
+        }
+      }
+    }
+  }
   .mg_player_eps {
     .mg_player_eps_container {
       height: 100%;
