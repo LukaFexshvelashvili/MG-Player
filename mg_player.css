@@ -699,10 +699,8 @@ a {
   justify-content: center;
   position: absolute;
   left: 0;
-  bottom: 25px;
+  bottom: 20px;
   height: 55px;
-  aspect-ratio: 16/9;
-  background-color: rgb(34, 34, 34);
   border-radius: 10px;
 }
 .mg_timeline_helper video {

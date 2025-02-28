@@ -68,7 +68,6 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
         <div class="mg_controls_bar">
           <div class="mg_timeline_scaler">
             <div class="mg_timeline_helper">
-              <video class="mg_helper_video" muted></video>
               <p class="mg_timeline_helper_time">00:00</p>
             </div>
             <div class="mg_timeline">
@@ -319,7 +318,6 @@ const mg_time_indicator_helper = document.querySelector(
   ".mg_time_indicator_helper"
 );
 const mg_timeline_helper = document.querySelector(".mg_timeline_helper");
-const mg_helper_video = document.querySelector(".mg_helper_video");
 const mg_timeline_helper_time = document.querySelector(
   ".mg_timeline_helper_time"
 );
@@ -414,7 +412,6 @@ let mg_main_controls;
 
 function changeVideoUrl(url) {
   mg_video.src = url;
-  mg_helper_video.src = url;
 }
 
 if (localStorage.getItem("mg_player_controls")) {
@@ -503,7 +500,7 @@ mg_timeline_scaler.addEventListener("touchend", removeSeeTime, {
   passive: true,
 });
 
-mg_timeline_scaler.addEventListener("mousemove", seeTime);
+mg_timeline_scaler.addEventListener("pointermove", seeTime);
 mg_timeline_scaler.addEventListener("touchmove", seeTimeTouch, {
   passive: true,
 });
@@ -894,17 +891,18 @@ function removeSeeTime() {
   mg_time_indicator_helper.style.width = "0%";
 }
 
-function seeTime(mouse) {
+function seeTime(pointer) {
+  if (pointer.pointerType === "touch") return;
+
   if (is_loaded) {
-    var getPer = (100 / mg_timeline_scaler.offsetWidth) * mouse.offsetX;
+    var getPer = (100 / mg_timeline_scaler.offsetWidth) * pointer.offsetX;
     mg_timeline_helper.style.opacity = 1;
     mg_timeline_helper.style.transform = `translateX(${
-      mouse.offsetX - mg_timeline_helper.offsetWidth / 2
+      pointer.offsetX - mg_timeline_helper.offsetWidth / 2
     }px)`;
     var vidTime = percentageToTime(getPer);
     if (vidTime) {
       mg_timeline_helper_time.innerHTML = formatTime(vidTime);
-      mg_helper_video.currentTime = vidTime.toFixed(6);
       mg_time_indicator_helper.style.width = getPer + "%";
     }
   }
@@ -921,10 +919,8 @@ function seeTimeTouch(event) {
       mg_timeline_scaler.getBoundingClientRect().left -
       mg_timeline_helper.offsetWidth / 2
     }px)`;
-
     const vidTime = percentageToTime(getPer);
     mg_timeline_helper_time.innerHTML = formatTime(vidTime);
-    mg_helper_video.currentTime = vidTime.toFixed(6);
     mg_time_indicator_helper.style.width = getPer + "%";
   }
 }
@@ -1353,7 +1349,6 @@ function changeInitialEpisode(episode) {
 function changeEpisode(episode) {
   InitializeVideo(episode);
   mg_video.currentTime = 0;
-  mg_helper_video.currentTime = 0;
   if (localStorage.getItem("mg_player")) {
     let mg_save_ = localStorage.getItem("mg_player");
     let mg_save = JSON.parse(mg_save_);
