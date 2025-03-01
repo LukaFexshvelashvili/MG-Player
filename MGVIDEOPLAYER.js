@@ -867,10 +867,16 @@ function fullscreenOnOff() {
     } else if (mg_player.msRequestFullscreen) {
       mg_player.msRequestFullscreen();
     }
+    if (screen.orientation) {
+      screen.orientation.lock("landscape").then(() => {});
+    }
     mg_fullscreen_on_.style.display = "none";
     mg_fullscreen_off_.style.display = "block";
   } else {
     if (document.exitFullscreen) {
+      if (screen.orientation) {
+        screen.orientation.unlock();
+      }
       document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
       document.mozCancelFullScreen();
@@ -883,6 +889,7 @@ function fullscreenOnOff() {
     mg_fullscreen_on_.style.display = "block";
   }
 }
+
 function isFullscreen() {
   return document.fullscreenElement === mg_player;
 }
@@ -1075,6 +1082,46 @@ function firstStart() {
 
   changeControls("play");
 }
+
+const mediaQuery = window.matchMedia("(orientation: landscape)");
+
+mediaQuery.addEventListener("change", (e) => {
+  if (e.matches) {
+    if (screen.orientation) {
+      screen.orientation.lock("landscape");
+    }
+    if (is_started) {
+      if (mg_player.requestFullscreen) {
+        mg_player.requestFullscreen();
+      } else if (mg_player.mozRequestFullScreen) {
+        mg_player.mozRequestFullScreen();
+      } else if (mg_player.webkitRequestFullscreen) {
+        mg_player.webkitRequestFullscreen();
+      } else if (mg_player.msRequestFullscreen) {
+        mg_player.msRequestFullscreen();
+      }
+      mg_fullscreen_on_.style.display = "none";
+      mg_fullscreen_off_.style.display = "block";
+    }
+  } else {
+    if (isFullscreen()) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+      mg_fullscreen_off_.style.display = "none";
+      mg_fullscreen_on_.style.display = "block";
+    }
+    if (screen.orientation) {
+      screen.orientation.unlock();
+    }
+  }
+});
 
 // ! ADDON FUNCTIONS
 
