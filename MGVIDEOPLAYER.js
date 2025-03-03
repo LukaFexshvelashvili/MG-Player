@@ -389,18 +389,33 @@ document.addEventListener("click", (event) => {
 let active_season = MG_PLAYER.seasons ? Object.keys(MG_PLAYER.seasons)[0] : 1;
 let active_episode = 1;
 
-function InitializeVideo(videoUrl) {
+var hlsInstance = null;
+
+function InitializeVideo(videoUrl, videoParams) {
   if (videoUrl.includes(".m3u8")) {
     if (Hls.isSupported()) {
+      if (hlsInstance) {
+        hlsInstance.destroy();
+      }
       var hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(mg_video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {});
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        if (videoParams !== null) {
+          if (videoParams.isPaused == false) {
+            mg_video
+              .play()
+              .catch((error) => console.warn("Autoplay blocked:", error));
+          } else {
+            playPause("pause");
+          }
+        }
+      });
     } else if (mg_video.canPlayType("application/vnd.apple.mpegurl")) {
       changeVideoUrl(videoUrl);
     } else {
       mg_error_block.classList.remove("mg_error_hidden");
+      setLoading(false);
     }
   } else {
     changeVideoUrl(videoUrl);
@@ -569,6 +584,7 @@ mg_video.addEventListener("timeupdate", function () {
 // * ERROR
 mg_video.addEventListener("error", function () {
   mg_error_block.classList.remove("mg_error_hidden");
+  setLoading(false);
 });
 
 let moveTimeout;
@@ -656,7 +672,8 @@ mg_qualitiesChildrens.forEach((item) => {
       var saveTime = mg_video.currentTime;
       var saveState = mg_video.paused;
       InitializeVideo(
-        MG_PLAYER.languages[mg_main_controls.lang][item.innerText]
+        MG_PLAYER.languages[mg_main_controls.lang][item.innerText],
+        { isPaused: saveState }
       );
 
       saveControls({ quality: item.innerText });
@@ -678,7 +695,8 @@ mg_languagesChildrens.forEach((item) => {
       var saveTime = mg_video.currentTime;
       var saveState = mg_video.paused;
       InitializeVideo(
-        MG_PLAYER.languages[item.innerText][mg_main_controls.quality]
+        MG_PLAYER.languages[item.innerText][mg_main_controls.quality],
+        { isPaused: saveState }
       );
       saveControls({ lang: item.innerText });
       active_setting_language.innerText = item.innerText;
@@ -1364,6 +1382,7 @@ function printEpisodes() {
     item.addEventListener("click", () => {
       active_episode = item.getAttribute("data-ep");
       mg_error_block.classList.add("mg_error_hidden");
+
       changeEpisode(getEpisodeRequest());
       mg_eps_childrens.forEach((k) =>
         k.classList.remove("mg_ep_button_active")
