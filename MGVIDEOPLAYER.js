@@ -23,7 +23,7 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
         </div>
       </div>
       <div class="mg_error_block mg_error_hidden">
-        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეიერით</div>
+        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეიერით ან აირჩიეთ სხვა ენა</div>
       </div>
       <div class="mg_context_menu">MG PLAYER V3.4</div>
       <div class="mg_loader mg_gtc mg_loader_hidden">
@@ -544,6 +544,13 @@ function setLoading(state) {
   }
 }
 // * WAITING
+
+mg_video.addEventListener("pause", function () {
+  playPause("pause");
+});
+mg_video.addEventListener("play", function () {
+  playPause("play");
+});
 mg_video.addEventListener("waiting", function () {
   setLoading(true);
 });
@@ -1045,6 +1052,13 @@ function soundUp() {
   saveControls({ volume: mg_video.volume });
 }
 function playPause(command) {
+  if (command == "play" && !mg_video.paused) {
+    changeControls("play");
+    return;
+  } else if (command == "pause" && mg_video.paused) {
+    changeControls("pause");
+    return;
+  }
   mouseMoving();
   if (mg_video.paused) {
     changeControls("play");
