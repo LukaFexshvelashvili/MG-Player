@@ -31,7 +31,11 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
       </div>
       <video preload="auto" class="mg_video"></video>
       <div class="mg_main_play">
-        <img class="mg_video_thumbnail" />
+            <img class="mg_video_thumbnail" width="900" height="600" src="${
+              MG_PLAYER.image
+            }"  srcset="${
+  MG_PLAYER.image_srcset ? MG_PLAYER.image_srcset : ""
+}" alt="${MG_PLAYER.image_alt ? MG_PLAYER.image_alt : ""}" />
         <div class="mg_play_icon">
           <svg
             viewBox="0 0 14 16"
@@ -459,7 +463,6 @@ function initializePlayer() {
     mg_player_eps.classList.remove("mg_player_eps_hidden");
   }
   getCheckOfControls();
-  mg_video_thumbnail.src = MG_PLAYER.image;
 
   // TODO TIMESAVES / GETTIMES
   handleLocalStorage();
@@ -698,6 +701,7 @@ mg_qualitiesChildrens.forEach((item) => {
 });
 mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
+    mg_error_block.classList.add("mg_error_hidden");
     if (!item.classList.contains("mg_button_active")) {
       var saveTime = mg_video.currentTime;
       var saveState = mg_video.paused;
@@ -732,6 +736,7 @@ mg_speed_button.forEach((item) => {
     }
   });
 });
+
 function handleKeyPress(event) {
   if (!FOCUSED) return;
   switch (event.key) {
