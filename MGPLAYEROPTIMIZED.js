@@ -29,7 +29,9 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
-      <video preload="none" class="mg_video"></video>
+      <video preload="none" class="mg_video">
+      </video>
+      
       <div class="mg_main_play">
         <img class="mg_video_thumbnail"  src="${MG_PLAYER.image}"  srcset="${
   MG_PLAYER.image_srcset ? MG_PLAYER.image_srcset : ""
@@ -339,6 +341,8 @@ const mg_fullscreen = document.querySelector(".mg_fullscreen");
 const mg_fullscreen_on_ = document.querySelector("#mg_fullscreen_on_");
 const mg_fullscreen_off_ = document.querySelector("#mg_fullscreen_off_");
 
+// * SUBTITLES
+
 // * CONTROLS
 const mg_speed_button = document.querySelectorAll(".mg_speed_button");
 const mg_controls = document.querySelector(".mg_controls");
@@ -463,6 +467,15 @@ function initializePlayer() {
   }
   if (MG_PLAYER.type === "SERIES") {
     mg_player_eps.classList.remove("mg_player_eps_hidden");
+  } else {
+    mg_player_eps.remove();
+  }
+  if (MG_PLAYER.subtitles) {
+    subtitlesRenew(MG_PLAYER.subtitles);
+  }
+  let track = mg_video.textTracks[0];
+  if (track) {
+    track.mode = "showing";
   }
   getCheckOfControls();
   handleLocalStorage();
@@ -1357,6 +1370,12 @@ function changeInitialEpisode(episode) {
 
 function changeEpisode(episode) {
   InitializeVideo(episode);
+  if (MG_PLAYER.seasons[active_season][active_episode - 1].subtitles?.GEO) {
+    subtitlesRenew(
+      MG_PLAYER.seasons[active_season][active_episode - 1].subtitles.GEO
+    );
+  }
+
   mg_video.currentTime = 0;
   const mg_save = JSON.parse(localStorage.getItem("mg_player"));
   mg_save[0].time = 0;
@@ -1367,7 +1386,23 @@ function changeEpisode(episode) {
   if (!is_started) firstStart();
   playPauseHand("play");
 }
+function subtitlesRenew(new_link) {
+  const oldTrack = document.querySelector("#mg_subtitles");
+  if (oldTrack) oldTrack.remove();
 
+  const newTrack = document.createElement("track");
+  newTrack.id = "mg_subtitles";
+  newTrack.src = new_link;
+  newTrack.kind = "subtitles";
+  newTrack.srclang = "en";
+  newTrack.label = "English";
+
+  mg_video.appendChild(newTrack);
+  let track = mg_video.textTracks[0];
+  if (track) {
+    track.mode = "showing";
+  }
+}
 function getEpisodeRequest() {
   const episode =
     MG_PLAYER.seasons[active_season][active_episode - 1].languages[

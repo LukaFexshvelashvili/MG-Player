@@ -173,6 +173,15 @@ a {
   border-radius: 2px;
 }
 
+#mg_video::cue {
+  position: absolute;
+  color: rgb(255, 255, 255);
+  background: black;
+  font-size: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  bottom: 20px;
+}
+
 .mg_context_menu {
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -213,9 +222,9 @@ a {
   height: 60px;
   aspect-ratio: 1/1;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.4);
-  -webkit-backdrop-filter: blur(3px);
-          backdrop-filter: blur(3px);
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
 }
 .mg_main_play .mg_play_icon svg {
   height: 30px;
@@ -710,7 +719,7 @@ a {
   height: 280px;
   width: 230px;
   border-radius: 0px 0px 0px 6px;
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(0, 0, 0, 0.65);
   -webkit-backdrop-filter: blur(2px);
           backdrop-filter: blur(2px);
   transition: transform 0.3s;

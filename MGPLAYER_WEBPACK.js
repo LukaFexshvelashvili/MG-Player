@@ -1,6 +1,6 @@
 (() => {
   const e = document.querySelector(".mg_player");
-  e.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">\n        <div class="mg_player_ep_button">ეპიზოდები</div>\n        <div class="mg_player_eps_container">\n          <div class="mg_player_eps_scroll"></div>\n          <div class="mg_player_seasons_scroll">\n            <div class="mg_eps_closer">\n              <svg\n                viewBox="0 0 23 23"\n                fill="none"\n                xmlns="http://www.w3.org/2000/svg"\n              >\n                <path\n                  d="M13.0246 11.5L17.2921 7.2324C17.4947 7.03022 17.6086 6.75586 17.6089 6.46968C17.6091 6.1835 17.4957 5.90894 17.2935 5.7064C17.0913 5.50387 16.817 5.38994 16.5308 5.38969C16.2446 5.38943 15.97 5.50288 15.7675 5.70506L11.4999 9.97263L7.23234 5.70506C7.0298 5.50252 6.7551 5.38873 6.46867 5.38873C6.18223 5.38873 5.90753 5.50252 5.705 5.70506C5.50246 5.90759 5.38867 6.1823 5.38867 6.46873C5.38867 6.75516 5.50246 7.02986 5.705 7.2324L9.97257 11.5L5.705 15.7676C5.50246 15.9701 5.38867 16.2448 5.38867 16.5312C5.38867 16.8177 5.50246 17.0924 5.705 17.2949C5.90753 17.4974 6.18223 17.6112 6.46867 17.6112C6.7551 17.6112 7.0298 17.4974 7.23234 17.2949L11.4999 13.0273L15.7675 17.2949C15.97 17.4974 16.2447 17.6112 16.5312 17.6112C16.8176 17.6112 17.0923 17.4974 17.2948 17.2949C17.4974 17.0924 17.6112 16.8177 17.6112 16.5312C17.6112 16.2448 17.4974 15.9701 17.2948 15.7676L13.0246 11.5Z"\n                  fill="white"\n                  fill-opacity="0.7"\n                />\n              </svg>\n            </div>\n            <div class="mg_player_seasons"></div>\n          </div>\n        </div>\n      </div>\n      <div class="mg_error_block mg_error_hidden">\n        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეიერით ან აირჩიეთ სხვა ენა</div>\n      </div>\n      <div class="mg_context_menu">MG PLAYER V3.4</div>\n      <div class="mg_loader mg_gtc mg_loader_hidden">\n        <div class="mg_loader_spinner"></div>\n      </div>\n      <video preload="none" class="mg_video"></video>\n      <div class="mg_main_play">\n        <img class="mg_video_thumbnail"  src="${
+  e.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">\n        <div class="mg_player_ep_button">ეპიზოდები</div>\n        <div class="mg_player_eps_container">\n          <div class="mg_player_eps_scroll"></div>\n          <div class="mg_player_seasons_scroll">\n            <div class="mg_eps_closer">\n              <svg\n                viewBox="0 0 23 23"\n                fill="none"\n                xmlns="http://www.w3.org/2000/svg"\n              >\n                <path\n                  d="M13.0246 11.5L17.2921 7.2324C17.4947 7.03022 17.6086 6.75586 17.6089 6.46968C17.6091 6.1835 17.4957 5.90894 17.2935 5.7064C17.0913 5.50387 16.817 5.38994 16.5308 5.38969C16.2446 5.38943 15.97 5.50288 15.7675 5.70506L11.4999 9.97263L7.23234 5.70506C7.0298 5.50252 6.7551 5.38873 6.46867 5.38873C6.18223 5.38873 5.90753 5.50252 5.705 5.70506C5.50246 5.90759 5.38867 6.1823 5.38867 6.46873C5.38867 6.75516 5.50246 7.02986 5.705 7.2324L9.97257 11.5L5.705 15.7676C5.50246 15.9701 5.38867 16.2448 5.38867 16.5312C5.38867 16.8177 5.50246 17.0924 5.705 17.2949C5.90753 17.4974 6.18223 17.6112 6.46867 17.6112C6.7551 17.6112 7.0298 17.4974 7.23234 17.2949L11.4999 13.0273L15.7675 17.2949C15.97 17.4974 16.2447 17.6112 16.5312 17.6112C16.8176 17.6112 17.0923 17.4974 17.2948 17.2949C17.4974 17.0924 17.6112 16.8177 17.6112 16.5312C17.6112 16.2448 17.4974 15.9701 17.2948 15.7676L13.0246 11.5Z"\n                  fill="white"\n                  fill-opacity="0.7"\n                />\n              </svg>\n            </div>\n            <div class="mg_player_seasons"></div>\n          </div>\n        </div>\n      </div>\n      <div class="mg_error_block mg_error_hidden">\n        <div class="mg_error">წარმოიშვა შეცდომა სცადეთ სხვა ფლეიერით ან აირჩიეთ სხვა ენა</div>\n      </div>\n      <div class="mg_context_menu">MG PLAYER V3.4</div>\n      <div class="mg_loader mg_gtc mg_loader_hidden">\n        <div class="mg_loader_spinner"></div>\n      </div>\n      <video preload="none" class="mg_video">\n      </video>\n      \n      <div class="mg_main_play">\n        <img class="mg_video_thumbnail"  src="${
     MG_PLAYER.image
   }"  srcset="${MG_PLAYER.image_srcset ? MG_PLAYER.image_srcset : ""}" alt="${
     MG_PLAYER.image_alt ? MG_PLAYER.image_alt : ""
@@ -32,8 +32,8 @@
     f = document.querySelector(".mg_endtime"),
     h = document.querySelector(".mg_skip_left_button"),
     L = document.querySelector(".mg_skip_right_button"),
-    C = document.querySelector(".mg_fullscreen"),
-    E = document.querySelector("#mg_fullscreen_on_"),
+    E = document.querySelector(".mg_fullscreen"),
+    C = document.querySelector("#mg_fullscreen_on_"),
     w = document.querySelector("#mg_fullscreen_off_"),
     b = document.querySelectorAll(".mg_speed_button"),
     S = document.querySelector(".mg_controls"),
@@ -43,9 +43,9 @@
     x = document.querySelectorAll(".mg_settings_column"),
     T = document.querySelectorAll(".mg_settings_back"),
     A = document.querySelectorAll(".mg_setting_choose"),
-    H = document.querySelector("#active_setting_language"),
-    R = document.querySelector("#active_setting_quality"),
-    P = document.querySelector("#active_setting_speed"),
+    R = document.querySelector("#active_setting_language"),
+    P = document.querySelector("#active_setting_quality"),
+    H = document.querySelector("#active_setting_speed"),
     G = document.querySelector("#mg_settings_toggler"),
     Y = document.querySelector(".mg_skip_left"),
     O = document.querySelector(".mg_skip_right"),
@@ -117,93 +117,102 @@
     }),
     localStorage.getItem("mg_player_controls")
       ? ((D = JSON.parse(localStorage.getItem("mg_player_controls"))),
-        (H.textContent = D.lang || "GEO"),
-        (R.textContent = D.quality || "HD"),
-        (P.textContent = D.speed || "1"))
+        (R.textContent = D.lang || "GEO"),
+        (P.textContent = D.quality || "HD"),
+        (H.textContent = D.speed || "1"))
       : ((D = { lang: "GEO", volume: 1, speed: 1, quality: "HD" }),
         localStorage.setItem("mg_player_controls", JSON.stringify(D))),
-    0 === D.volume && Se(),
-    "SERIES" === MG_PLAYER.type && j.classList.remove("mg_player_eps_hidden"),
     (function () {
-      (D.lang = MG_PLAYER.languages[D.lang] ? D.lang : "GEO"),
-        (D.quality = MG_PLAYER.languages[D.lang]?.[D.quality]
-          ? D.quality
-          : "HD");
-      const e =
-        MG_PLAYER.languages[D.lang]?.[D.quality] ||
-        MG_PLAYER.languages.GEO?.[D.quality] ||
-        MG_PLAYER.languages.GEO?.HD;
-      var t;
-      b.forEach((e) => {
-        e.innerHTML.trim() == D.speed &&
-          (b.forEach((e) => e.classList.remove("mg_button_active")),
-          e.classList.add("mg_button_active"));
-      }),
-        (t = D.volume) < 0 ||
-          t > 1 ||
-          (qe(0 === t ? "off" : "on"),
-          (s.volume = t),
-          r.style.setProperty("--progress", 100 * t + "%"),
-          (r.value = 100 * t)),
-        Pe({
-          lang: D.lang,
-          quality: D.quality,
-          volume: D.volume,
-          speed: D.speed,
-        }),
-        le(e);
+      0 === D.volume && Se(),
+        "SERIES" === MG_PLAYER.type
+          ? j.classList.remove("mg_player_eps_hidden")
+          : j.remove(),
+        MG_PLAYER.subtitles && Ye(MG_PLAYER.subtitles);
+      let e = s.textTracks[0];
+      e && (e.mode = "showing"),
+        (function () {
+          (D.lang = MG_PLAYER.languages[D.lang] ? D.lang : "GEO"),
+            (D.quality = MG_PLAYER.languages[D.lang]?.[D.quality]
+              ? D.quality
+              : "HD");
+          const e =
+            MG_PLAYER.languages[D.lang]?.[D.quality] ||
+            MG_PLAYER.languages.GEO?.[D.quality] ||
+            MG_PLAYER.languages.GEO?.HD;
+          var t;
+          b.forEach((e) => {
+            e.innerHTML.trim() == D.speed &&
+              (b.forEach((e) => e.classList.remove("mg_button_active")),
+              e.classList.add("mg_button_active"));
+          }),
+            (t = D.volume) < 0 ||
+              t > 1 ||
+              (qe(0 === t ? "off" : "on"),
+              (s.volume = t),
+              r.style.setProperty("--progress", 100 * t + "%"),
+              (r.value = 100 * t)),
+            He({
+              lang: D.lang,
+              quality: D.quality,
+              volume: D.volume,
+              speed: D.speed,
+            }),
+            le(e);
+        })(),
+        (function () {
+          const e = JSON.parse(localStorage.getItem("mg_player")) || [],
+            t = e.find((e) => e.id == MG_PLAYER.id);
+          t
+            ? (function (e, t) {
+                (function (e, t) {
+                  if (t < 0 || t >= e.length) return e;
+                  const n = e.splice(t, 1)[0];
+                  e.unshift(n);
+                })(e, e.indexOf(t)),
+                  "SERIES" == MG_PLAYER.type &&
+                    ((U = t.season),
+                    (K = t.episode),
+                    (function (e) {
+                      setTimeout(() => {
+                        const t = F.querySelector(
+                            `[data-season="${e.season}"]`
+                          ),
+                          n = B.querySelector(`[data-ep="${e.episode}"]`);
+                        t && (F.scrollTop = t.offsetTop - F.offsetTop - 100),
+                          n && (B.scrollTop = n.offsetTop - B.offsetTop - 100);
+                      }, 0);
+                    })(t),
+                    le(Oe())),
+                  Pe(e, 5),
+                  localStorage.setItem("mg_player", JSON.stringify(e));
+              })(e, t)
+            : (function (e) {
+                const t =
+                  "SERIES" == MG_PLAYER.type
+                    ? { id: MG_PLAYER.id, time: 0, episode: 1, season: U }
+                    : { id: MG_PLAYER.id, time: 0 };
+                e.unshift(t),
+                  Pe(e, 5),
+                  localStorage.setItem("mg_player", JSON.stringify(e));
+              })(e);
+        })(),
+        (I.innerHTML = Object.keys(MG_PLAYER.languages[D.lang])
+          .map(
+            (e) =>
+              `<div class='mg_button${
+                D.quality === e ? " mg_button_active" : ""
+              }'>${e}</div>`
+          )
+          .join("")),
+        ($.innerHTML = Object.keys(MG_PLAYER.languages)
+          .map(
+            (e) =>
+              `<div class='mg_button${
+                D.lang === e ? " mg_button_active" : ""
+              }'>${e}</div>`
+          )
+          .join(""));
     })(),
-    (function () {
-      const e = JSON.parse(localStorage.getItem("mg_player")) || [],
-        t = e.find((e) => e.id == MG_PLAYER.id);
-      t
-        ? (function (e, t) {
-            (function (e, t) {
-              if (t < 0 || t >= e.length) return e;
-              const n = e.splice(t, 1)[0];
-              e.unshift(n);
-            })(e, e.indexOf(t)),
-              "SERIES" == MG_PLAYER.type &&
-                ((U = t.season),
-                (K = t.episode),
-                (function (e) {
-                  setTimeout(() => {
-                    const t = F.querySelector(`[data-season="${e.season}"]`),
-                      n = B.querySelector(`[data-ep="${e.episode}"]`);
-                    t && (F.scrollTop = t.offsetTop - F.offsetTop - 100),
-                      n && (B.scrollTop = n.offsetTop - B.offsetTop - 100);
-                  }, 0);
-                })(t),
-                le(Ye())),
-              Re(e, 5),
-              localStorage.setItem("mg_player", JSON.stringify(e));
-          })(e, t)
-        : (function (e) {
-            const t =
-              "SERIES" == MG_PLAYER.type
-                ? { id: MG_PLAYER.id, time: 0, episode: 1, season: U }
-                : { id: MG_PLAYER.id, time: 0 };
-            e.unshift(t),
-              Re(e, 5),
-              localStorage.setItem("mg_player", JSON.stringify(e));
-          })(e);
-    })(),
-    (I.innerHTML = Object.keys(MG_PLAYER.languages[D.lang])
-      .map(
-        (e) =>
-          `<div class='mg_button${
-            D.quality === e ? " mg_button_active" : ""
-          }'>${e}</div>`
-      )
-      .join("")),
-    ($.innerHTML = Object.keys(MG_PLAYER.languages)
-      .map(
-        (e) =>
-          `<div class='mg_button${
-            D.lang === e ? " mg_button_active" : ""
-          }'>${e}</div>`
-      )
-      .join("")),
     e.addEventListener("contextmenu", function (e) {
       e.preventDefault();
       const t = e.currentTarget.getBoundingClientRect(),
@@ -230,11 +239,11 @@
     N.addEventListener("click", me),
     e.addEventListener("mousemove", ue, { passive: !0 }),
     e.addEventListener("touchmove", ue, { passive: !0 }),
-    C.addEventListener("click", Le),
+    E.addEventListener("click", Le),
     i.addEventListener("click", xe),
     Y.addEventListener("touchend", function (e) {
       e.preventDefault(),
-        He(
+        Re(
           () => {
             s.currentTime -= 10;
           },
@@ -245,7 +254,7 @@
     }),
     O.addEventListener("touchend", function (e) {
       e.preventDefault(),
-        He(
+        Re(
           () => {
             s.currentTime += 10;
           },
@@ -276,7 +285,7 @@
       qe(0 === t ? "off" : "on"),
         (D.volume = t),
         (s.volume = t),
-        Pe({ volume: t });
+        He({ volume: t });
     }),
     G.addEventListener("click", function () {
       q.classList.toggle("mg_settings_hidden");
@@ -296,7 +305,7 @@
     }),
     m.addEventListener("touchstart", we, { passive: !0 }),
     m.addEventListener("touchmove", we, { passive: !0 }),
-    m.addEventListener("touchend", Ee, { passive: !0 }),
+    m.addEventListener("touchend", Ce, { passive: !0 }),
     m.addEventListener("pointermove", function (e) {
       if ("touch" === e.pointerType || !te) return;
       const t = (100 / m.offsetWidth) * e.offsetX;
@@ -322,7 +331,7 @@
       },
       { passive: !0 }
     ),
-    m.addEventListener("mouseout", Ee),
+    m.addEventListener("mouseout", Ce),
     document.addEventListener("keydown", function (e) {
       if (W)
         switch (e.key) {
@@ -339,7 +348,7 @@
                 (s.volume = e),
                 (r.value = 100 * e),
                 r.style.setProperty("--progress", 100 * e + "%"),
-                Pe({ volume: e });
+                He({ volume: e });
             })();
             break;
           case "ArrowDown":
@@ -349,7 +358,7 @@
                 (s.volume = e),
                 (r.value = 100 * e),
                 r.style.setProperty("--progress", 100 * e + "%"),
-                Pe({ volume: e });
+                He({ volume: e });
             })();
             break;
           case "f":
@@ -499,20 +508,20 @@
         document.mozCancelFullScreen ||
         document.webkitExitFullscreen ||
         document.msExitFullscreen;
-    Ce()
+    Ee()
       ? (screen.orientation?.unlock(),
         n.call(document),
         (w.style.display = "none"),
-        (E.style.display = "block"))
+        (C.style.display = "block"))
       : (t.call(e),
         screen.orientation?.lock("landscape").then(() => {}),
-        (E.style.display = "none"),
+        (C.style.display = "none"),
         (w.style.display = "block"));
   }
-  function Ce() {
+  function Ee() {
     return document.fullscreenElement === e;
   }
-  function Ee() {
+  function Ce() {
     (v.style.opacity = 0), (g.style.width = "0%");
   }
   function we(e) {
@@ -538,7 +547,7 @@
       (s.volume = e),
       (r.value = 100 * e),
       r.style.setProperty("--progress", 100 * e + "%"),
-      Pe({ volume: e });
+      He({ volume: e });
   }
   function ke(e) {
     ("play" === e && !s.paused) || ("pause" === e && s.paused)
@@ -574,7 +583,7 @@
   function Ae(e) {
     return s.duration ? (s.duration / 100) * e : s.currentTime;
   }
-  function He(e, t) {
+  function Re(e, t) {
     oe++,
       1 === oe
         ? (J = setTimeout(() => {
@@ -582,22 +591,22 @@
           }, 300))
         : 2 === oe && (clearTimeout(J), e(), (oe = 0));
   }
-  function Re(e, t) {
+  function Pe(e, t) {
     e.length > t && e.splice(t);
   }
-  function Pe({ lang: e, volume: t, speed: n, quality: s }) {
+  function He({ lang: e, volume: t, speed: n, quality: s }) {
     const i = JSON.parse(localStorage.getItem("mg_player_controls")) || {};
     (i.volume = t ?? i.volume),
       (i.lang = e ?? i.lang),
       (i.quality = s ?? i.quality),
       (i.speed = n ?? i.speed),
-      (H.textContent = e ? i.lang.toString() : "GEO"),
-      (R.textContent = s ? i.quality.toString() : "HD"),
-      (P.textContent = n ? i.speed.toString() : "1"),
+      (R.textContent = e ? i.lang.toString() : "GEO"),
+      (P.textContent = s ? i.quality.toString() : "HD"),
+      (H.textContent = n ? i.speed.toString() : "1"),
       localStorage.setItem("mg_player_controls", JSON.stringify(i));
   }
   function Ge() {
-    const e = Oe().season;
+    const e = $e().season;
     (B.innerHTML = MG_PLAYER.seasons[U].map(
       (t, n) =>
         `\n      <div data-ep="${n + 1}" class="mg_ep_button ${
@@ -609,7 +618,10 @@
           (K = e.getAttribute("data-ep")),
             t.classList.add("mg_error_hidden"),
             (function (e) {
-              le(e), (s.currentTime = 0);
+              le(e),
+                MG_PLAYER.seasons[U][K - 1].subtitles?.GEO &&
+                  Ye(MG_PLAYER.seasons[U][K - 1].subtitles.GEO),
+                (s.currentTime = 0);
               const t = JSON.parse(localStorage.getItem("mg_player"));
               var n;
               (t[0].time = 0),
@@ -620,7 +632,7 @@
                 ee || xe(),
                 Me((n = "play")),
                 s[n]();
-            })(Ye()),
+            })(Oe()),
             Array.from(B.children).forEach((e) =>
               e.classList.remove("mg_ep_button_active")
             ),
@@ -629,7 +641,20 @@
         });
       });
   }
-  function Ye() {
+  function Ye(e) {
+    const t = document.querySelector("#mg_subtitles");
+    t && t.remove();
+    const n = document.createElement("track");
+    (n.id = "mg_subtitles"),
+      (n.src = e),
+      (n.kind = "subtitles"),
+      (n.srclang = "en"),
+      (n.label = "English"),
+      s.appendChild(n);
+    let i = s.textTracks[0];
+    i && (i.mode = "showing");
+  }
+  function Oe() {
     const e = MG_PLAYER.seasons[U][K - 1].languages[D.lang];
     return (
       e?.[D.quality] ||
@@ -637,7 +662,7 @@
       Object.values(Object.values(MG_PLAYER.seasons[U][K - 1].languages)[0])[0]
     );
   }
-  function Oe() {
+  function $e() {
     const e = JSON.parse(localStorage.getItem("mg_player"));
     return e?.find((e) => e.id == MG_PLAYER.id) || null;
   }
@@ -647,8 +672,8 @@
         const t = s.currentTime,
           n = s.paused;
         le(MG_PLAYER.languages[D.lang][e.textContent], { isPaused: n }),
-          Pe({ quality: e.textContent }),
-          (R.textContent = e.textContent),
+          He({ quality: e.textContent }),
+          (P.textContent = e.textContent),
           (s.currentTime = t.toFixed(6)),
           n || s.play(),
           ve.forEach((e) => e.classList.remove("mg_button_active")),
@@ -665,8 +690,8 @@
           const t = s.currentTime,
             n = s.paused;
           le(MG_PLAYER.languages[e.textContent][D.quality], { isPaused: n }),
-            Pe({ lang: e.textContent }),
-            (H.textContent = e.textContent),
+            He({ lang: e.textContent }),
+            (R.textContent = e.textContent),
             (s.currentTime = t.toFixed(6)),
             n || s.play(),
             pe.forEach((e) => e.classList.remove("mg_button_active")),
@@ -682,8 +707,8 @@
           document
             .querySelectorAll(".mg_speed_button")
             .forEach((e) => e.classList.remove("mg_button_active")),
-          Pe({ speed: t.textContent }),
-          (P.textContent = t.textContent),
+          He({ speed: t.textContent }),
+          (H.textContent = t.textContent),
           t.classList.add("mg_button_active"));
       }
     }),
@@ -710,12 +735,12 @@
         t.matches
           ? ee &&
             (e.requestFullscreen?.(),
-            (E.style.display = "none"),
+            (C.style.display = "none"),
             (w.style.display = "block"))
-          : (Ce() &&
+          : (Ee() &&
               (document.exitFullscreen?.(),
               (w.style.display = "none"),
-              (E.style.display = "block")),
+              (C.style.display = "block")),
             screen.orientation?.unlock());
       }),
     "SERIES" == MG_PLAYER.type &&
@@ -733,7 +758,7 @@
         e.addEventListener("click", () => {
           (U = e.getAttribute("data-season")), Ge();
           const t = B.querySelector(`[data-ep="${K}"]`),
-            n = Oe().season;
+            n = $e().season;
           (B.scrollTop = t && n == U ? t.offsetTop - B.offsetTop - 100 : 0),
             Array.from(F.children).forEach((e) =>
               e.classList.remove("mg_se_button_active")
