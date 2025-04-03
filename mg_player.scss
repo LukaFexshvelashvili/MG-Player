@@ -53,6 +53,63 @@ a {
 .mg_skip_right {
   right: 0;
 }
+.mg_pre_roll {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 4;
+  background-color: #000000;
+  .mg_pre_roll_video {
+    height: 100%;
+    width: 100%;
+  }
+  .mg_pre_roll_video_skip {
+    height: 35px;
+    width: 140px;
+    position: absolute;
+    bottom: 20px;
+    font-family: mmedium;
+    display: flex;
+    justify-content: center;
+    letter-spacing: 0.5px;
+    align-items: center;
+    right: 10px;
+    font-size: 14px;
+    background-color: rgb(27, 27, 27);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+  }
+}
+.mg_pre_roll_volume {
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  height: 36px;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pre_roll_muted {
+  opacity: 0.3;
+}
+.mg_pre_roll_timeline {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 6px;
+  background-color: rgba(66, 66, 66, 0.5);
+}
+.mg_pre_roll_indicator {
+  height: 100%;
+  background-color: var(--main);
+  transition: width 0.2s;
+  width: 0;
+}
 .mg_player {
   user-select: none;
   position: relative;
@@ -161,12 +218,34 @@ a {
 }
 
 #mg_video::cue {
-  position: absolute;
   color: rgb(255, 255, 255);
-  background: black;
-  font-size: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  bottom: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 16px;
+}
+.mg_subtitles_toggle {
+  display: none;
+  cursor: pointer;
+}
+.mg_subtitles_toggle_hidden {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.mg_subtitles_toggle_hidden::before {
+  position: absolute;
+  content: "";
+  height: 2px;
+  width: 100%;
+  border: 2px solid #000000;
+  transform: rotate(45deg);
+  bottom: 40%;
+  left: -2px;
+  background-color: white;
+}
+
+.mg_subtitles_show {
+  display: block;
 }
 
 .mg_context_menu {
@@ -206,9 +285,9 @@ a {
     aspect-ratio: 1/1;
     border-radius: 50%;
     background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(1px);
     svg {
-      height: 30px;
+      height: 26px;
       aspect-ratio: 1/1;
       transform: translateX(2px);
 
@@ -273,7 +352,7 @@ a {
       height: 4px;
       width: 100%;
       border-radius: 5px;
-      background-color: #363636;
+      background-color: rgba(255, 255, 255, 0.2);
       transition: 0.2s;
       .mg_time_indicator {
         position: relative;
@@ -641,7 +720,7 @@ a {
   top: 0px;
   right: 0px;
   z-index: 10;
-  transition: visibility 0.1s, opacity 0.3s;
+  transition: visibility 0.2s, opacity 0.3s;
   height: 100%;
   .mg_player_eps_container {
     will-change: filter;
@@ -785,6 +864,10 @@ a {
     }
   }
 }
+.mg_eps_hide {
+  opacity: 0;
+  visibility: hidden;
+}
 .mg_player_eps_scroll::-webkit-scrollbar {
   width: 3px;
 }
@@ -882,6 +965,12 @@ a {
     .mg_button {
       font-size: 11px;
       gap: 3px;
+    }
+  }
+  .mg_main_play .mg_play_icon {
+    height: 46px;
+    svg {
+      height: 20px;
     }
   }
   #mg_settings_toggler {

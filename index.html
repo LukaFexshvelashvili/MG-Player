@@ -10,6 +10,22 @@
     <title>MG PLAYER V3</title>
   </head>
   <body>
+    <!-- <video id="video" controls></video>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+      if (Hls.isSupported()) {
+        var video = document.getElementById("video");
+        var hls = new Hls();
+        hls.loadSource(
+          "https://storage.moviesgo.ge/animes/Solo_Leveling/2_10/index.m3u8"
+        );
+        hls.attachMedia(video);
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          console.error("HLS Error:", data);
+        });
+      }
+    </script> -->
+
     <div class="mg_player"></div>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -19,6 +35,8 @@
         id: "4",
         image: "https://cdn.moviesgo.ge/uploads/12/tNb8LSI.webp",
         srcset: "",
+        subtitles: { GEO: "video/1_1/SUB_GEO.vtt" },
+        preroll: "video/ad.mp4",
         languages: {
           GEO: {
             HD: "video/1_1/master.m3u8",
@@ -35,6 +53,7 @@
                 GEO: {
                   HD: "video/1_1/master.m3u8",
                 },
+                subtitles: { GEO: "video/1_1/SUB_GEO.vtt" },
               },
             },
           ],

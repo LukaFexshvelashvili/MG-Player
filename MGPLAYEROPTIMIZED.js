@@ -1,6 +1,6 @@
 // * MAIN
 const mg_player = document.querySelector(".mg_player");
-mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
+mg_player.innerHTML += `<div class="mg_player_eps mg_player_eps_hidden">
         <div class="mg_player_ep_button">ეპიზოდები</div>
         <div class="mg_player_eps_container">
           <div class="mg_player_eps_scroll"></div>
@@ -29,7 +29,7 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
       <div class="mg_loader mg_gtc mg_loader_hidden">
         <div class="mg_loader_spinner"></div>
       </div>
-      <video preload="none" class="mg_video">
+      <video preload="none" class="mg_video" crossorigin="anonymous">
       </video>
       
       <div class="mg_main_play">
@@ -154,6 +154,14 @@ mg_player.innerHTML = `<div class="mg_player_eps mg_player_eps_hidden">
               </div>
             </div>
             <div class="mg_last_row">
+              <div class="mg_subtitles_toggle">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g fill="none" stroke="white" stroke-width="2">
+    <path d="M2 12c0-3.771 0-5.657 1.172-6.828C4.343 4 6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172C22 6.343 22 8.229 22 12c0 3.771 0 5.657-1.172 6.828C19.657 20 17.771 20 14 20h-4c-3.771 0-5.657 0-6.828-1.172C2 17.657 2 15.771 2 12Z"/>
+    <path stroke-linecap="round" d="M10 16H6m8-3h4m-4 3h-1.5m-3-3h2m6.5 3h-1.5M6 13h1"/>
+  </g>
+</svg>
+              </div>
               <div class="mg_download mg_mob_off">
                 <svg
                   width="16"
@@ -342,6 +350,7 @@ const mg_fullscreen_on_ = document.querySelector("#mg_fullscreen_on_");
 const mg_fullscreen_off_ = document.querySelector("#mg_fullscreen_off_");
 
 // * SUBTITLES
+const mg_subtitles_toggle = document.querySelector(".mg_subtitles_toggle");
 
 // * CONTROLS
 const mg_speed_button = document.querySelectorAll(".mg_speed_button");
@@ -460,7 +469,23 @@ if (localStorage.getItem("mg_player_controls")) {
   mg_main_controls = { lang: "GEO", volume: 1, speed: 1, quality: "HD" };
   localStorage.setItem("mg_player_controls", JSON.stringify(mg_main_controls));
 }
-
+if (MG_PLAYER.languages.GEO) {
+  mg_main_controls.lang = "GEO";
+} else if (MG_PLAYER.languages.ENG) {
+  mg_main_controls.lang = "ENG";
+}
+mg_subtitles_toggle.addEventListener("click", () => {
+  let track = mg_video.textTracks[0];
+  if (track) {
+    if (track.mode == "showing") {
+      track.mode = "hidden";
+      mg_subtitles_toggle.classList.add("mg_subtitles_toggle_hidden");
+    } else {
+      track.mode = "showing";
+      mg_subtitles_toggle.classList.remove("mg_subtitles_toggle_hidden");
+    }
+  }
+});
 function initializePlayer() {
   if (mg_main_controls.volume === 0) {
     soundOnOff("off");
@@ -470,8 +495,9 @@ function initializePlayer() {
   } else {
     mg_player_eps.remove();
   }
-  if (MG_PLAYER.subtitles) {
-    subtitlesRenew(MG_PLAYER.subtitles);
+  if (MG_PLAYER.subtitles?.GEO) {
+    mg_subtitles_toggle.classList.add("mg_subtitles_show");
+    subtitlesRenew(MG_PLAYER.subtitles.GEO);
   }
   let track = mg_video.textTracks[0];
   if (track) {
@@ -480,20 +506,30 @@ function initializePlayer() {
   getCheckOfControls();
   handleLocalStorage();
   populateQualityAndLanguageOptions();
+  if (MG_PLAYER.preroll) {
+    handleAd();
+  }
 }
+function handleAd() {
+  //   mg_player.innerHTML += `
+  // `;
+}
+
 initializePlayer();
 
 function populateQualityAndLanguageOptions() {
-  mg_qualities.innerHTML = Object.keys(
-    MG_PLAYER.languages[mg_main_controls.lang]
-  )
-    .map(
-      (quality) =>
-        `<div class='mg_button${
-          mg_main_controls.quality === quality ? " mg_button_active" : ""
-        }'>${quality}</div>`
+  if (MG_PLAYER.languages[mg_main_controls.lang]) {
+    mg_qualities.innerHTML = Object.keys(
+      MG_PLAYER.languages[mg_main_controls.lang]
     )
-    .join("");
+      .map(
+        (quality) =>
+          `<div class='mg_button${
+            mg_main_controls.quality === quality ? " mg_button_active" : ""
+          }'>${quality}</div>`
+      )
+      .join("");
+  }
 
   mg_languages.innerHTML = Object.keys(MG_PLAYER.languages)
     .map(
@@ -528,13 +564,8 @@ mg_sound_slider.addEventListener("input", measureSound);
 mg_settings_toggler.addEventListener("click", toggleSettings);
 mg_frame.addEventListener("click", togglePIP);
 mg_download.addEventListener("click", downloadMovie);
-mg_timeline_scaler.addEventListener("click", measureTimeMouse);
-mg_timeline_scaler.addEventListener("touchstart", measureTimeTouch, {
-  passive: true,
-});
-mg_timeline_scaler.addEventListener("touchmove", measureTimeTouch, {
-  passive: true,
-});
+mg_timeline_scaler.addEventListener("click", handleTimeInput);
+mg_timeline_scaler.addEventListener("touchmove", handleTimeInput);
 mg_timeline_scaler.addEventListener("touchend", removeSeeTime, {
   passive: true,
 });
@@ -577,23 +608,42 @@ mg_video.addEventListener("playing", () => {
 mg_video.addEventListener("canplaythrough", () => setLoading(false));
 mg_video.addEventListener("loadeddata", () => {
   mg_error_block.classList.add("mg_error_hidden");
-  const getLocaledTime = getSavedTime();
-  mg_video.currentTime = getLocaledTime.toFixed(6);
-  measureTime(getLocaledTime);
+  if (!MG_PLAYER.prevent_time) {
+    const getLocaledTime = getSavedTime();
+    mg_video.currentTime = getLocaledTime.toFixed(6);
+    measureTime(getLocaledTime);
+  }
   is_loaded = true;
   setLoading(false);
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   mg_endtime.innerHTML = formatTime(mg_video.duration);
 });
+const TIMELINE_UPDATE = {
+  THRESHOLD: 12,
+  lastUpdate: 0,
+  elements: {
+    start: mg_starttime,
+    indicator: mg_time_indicator,
+  },
+};
+
 function updateTimeline() {
-  mg_starttime.innerHTML = formatTime(mg_video.currentTime);
-  requestAnimationFrame(() => measureTime(mg_video.currentTime));
-  if (++lastUpdate >= 12) {
-    replaceTimeline(mg_video.currentTime);
-    lastUpdate = 0;
+  const t = mg_video.currentTime;
+  const d = mg_video.duration;
+
+  TIMELINE_UPDATE.elements.start.textContent = formatTime(t);
+
+  requestAnimationFrame(() => {
+    if (time_measuring && d > 0) {
+      TIMELINE_UPDATE.elements.indicator.style.width = `${(t / d) * 100}%`;
+    }
+  });
+
+  if (++TIMELINE_UPDATE.lastUpdate >= TIMELINE_UPDATE.THRESHOLD) {
+    replaceTimeline(t);
+    TIMELINE_UPDATE.lastUpdate = 0;
   }
 }
-
 mg_video.addEventListener("timeupdate", updateTimeline);
 mg_video.addEventListener("error", () => {
   mg_error_block.classList.remove("mg_error_hidden");
@@ -641,36 +691,46 @@ if (!MG_PLAYER.seasons) {
 }
 
 function onDraging(mouse) {
-  if (isDragging) {
-    const getPer =
-      (100 / mg_timeline_scaler.offsetWidth) *
-      (mouse.clientX - mg_timeline_scaler.getBoundingClientRect().left);
-    mg_time_indicator.style.width = `${getPer}%`;
-    mg_video.currentTime = percentageToTime(getPer);
-  }
+  if (!isDragging) return;
+
+  const { left, width } = mg_timeline_scaler.getBoundingClientRect();
+  const percentage = Math.max(
+    0,
+    Math.min(100, ((mouse.clientX - left) / width) * 100)
+  );
+
+  mg_time_indicator.style.width = `${percentage}%`;
+  mg_video.currentTime = percentageToTime(percentage);
 }
 
 function onDragingTouch(event) {
+  if (!isDragging) return;
+
   const touch = event.touches[0];
-  if (isDragging) {
-    const getPer =
-      (100 / mg_timeline_scaler.offsetWidth) *
-      (touch.clientX - mg_timeline_scaler.getBoundingClientRect().left);
-    mg_time_indicator.style.width = `${getPer}%`;
-  }
+  const { left, width } = mg_timeline_scaler.getBoundingClientRect();
+  const percentage = Math.max(
+    0,
+    Math.min(100, ((touch.clientX - left) / width) * 100)
+  );
+
+  mg_time_indicator.style.width = `${percentage}%`;
 }
 
 mouseTouchDragger();
 
 function contextClick(e) {
   e.preventDefault();
-  const rect = e.currentTarget.getBoundingClientRect();
-  const xPos = e.clientX - rect.left;
-  const yPos = e.clientY - rect.top;
   clearTimeout(sTimer);
-  mg_context_menu.style.left = `${xPos}px`;
-  mg_context_menu.style.top = `${yPos}px`;
-  mg_context_menu.style.display = "flex";
+
+  const { left, top } = e.currentTarget.getBoundingClientRect();
+  const { clientX, clientY } = e;
+
+  Object.assign(mg_context_menu.style, {
+    left: `${clientX - left}px`,
+    top: `${clientY - top}px`,
+    display: "flex",
+  });
+
   sTimer = setTimeout(() => {
     mg_context_menu.style.display = "none";
   }, 1500);
@@ -683,50 +743,45 @@ document.addEventListener("click", () => {
 const mg_qualitiesChildrens = Array.from(mg_qualities.children);
 const mg_languagesChildrens = Array.from(mg_languages.children);
 
+function handleMediaChange(type, item, collections) {
+  if (item.classList.contains("mg_button_active")) return;
+
+  const saveTime = mg_video.currentTime;
+  const saveState = mg_video.paused;
+  const activeSetting =
+    type === "quality" ? active_setting_quality : active_setting_language;
+  const controlKey =
+    type === "quality" ? mg_main_controls.quality : mg_main_controls.lang;
+
+  const source =
+    type === "quality"
+      ? MG_PLAYER.languages[mg_main_controls.lang][item.textContent]
+      : MG_PLAYER.languages[item.textContent][controlKey];
+
+  InitializeVideo(source, { isPaused: saveState });
+
+  saveControls({ [type]: item.textContent });
+  activeSetting.textContent = item.textContent;
+  mg_video.currentTime = saveTime.toFixed(6);
+
+  if (!saveState) {
+    mg_video.play();
+  }
+
+  collections.forEach((el) => el.classList.remove("mg_button_active"));
+  item.classList.add("mg_button_active");
+}
+
 mg_qualitiesChildrens.forEach((item) => {
-  item.addEventListener("click", () => {
-    if (!item.classList.contains("mg_button_active")) {
-      const saveTime = mg_video.currentTime;
-      const saveState = mg_video.paused;
-      InitializeVideo(
-        MG_PLAYER.languages[mg_main_controls.lang][item.textContent],
-        { isPaused: saveState }
-      );
-      saveControls({ quality: item.textContent });
-      active_setting_quality.textContent = item.textContent;
-      mg_video.currentTime = saveTime.toFixed(6);
-      if (!saveState) {
-        mg_video.play();
-      }
-      mg_qualitiesChildrens.forEach((k) =>
-        k.classList.remove("mg_button_active")
-      );
-      item.classList.add("mg_button_active");
-    }
-  });
+  item.addEventListener("click", () =>
+    handleMediaChange("quality", item, mg_qualitiesChildrens)
+  );
 });
 
 mg_languagesChildrens.forEach((item) => {
   item.addEventListener("click", () => {
     mg_error_block.classList.add("mg_error_hidden");
-    if (!item.classList.contains("mg_button_active")) {
-      const saveTime = mg_video.currentTime;
-      const saveState = mg_video.paused;
-      InitializeVideo(
-        MG_PLAYER.languages[item.textContent][mg_main_controls.quality],
-        { isPaused: saveState }
-      );
-      saveControls({ lang: item.textContent });
-      active_setting_language.textContent = item.textContent;
-      mg_video.currentTime = saveTime.toFixed(6);
-      if (!saveState) {
-        mg_video.play();
-      }
-      mg_languagesChildrens.forEach((k) =>
-        k.classList.remove("mg_button_active")
-      );
-      item.classList.add("mg_button_active");
-    }
+    handleMediaChange("lang", item, mg_languagesChildrens);
   });
 });
 
@@ -734,64 +789,72 @@ mg_player.addEventListener("click", (event) => {
   if (event.target.classList.contains("mg_speed_button")) {
     const item = event.target;
     if (!item.classList.contains("mg_button_active")) {
-      mg_video.playbackRate = item.textContent;
-      document
-        .querySelectorAll(".mg_speed_button")
-        .forEach((k) => k.classList.remove("mg_button_active"));
+      mg_video.playbackRate = parseFloat(item.textContent);
+      document.querySelectorAll(".mg_speed_button").forEach((btn) => {
+        btn.classList.remove("mg_button_active");
+      });
       saveControls({ speed: item.textContent });
       active_setting_speed.textContent = item.textContent;
       item.classList.add("mg_button_active");
     }
   }
 });
+const SKIP_TIME = 10;
+
+function updateVideoTime(timeChange) {
+  mg_video.currentTime += timeChange;
+  const formattedTime = formatTime(mg_video.currentTime);
+  mg_starttime.textContent = formattedTime;
+  measureTime(mg_video.currentTime);
+}
+
 function handleKeyPress(event) {
   if (!FOCUSED) return;
-  switch (event.key) {
-    case "ArrowLeft":
-      mg_video.currentTime -= 10;
-      mg_starttime.innerHTML = formatTime(mg_video.currentTime);
+
+  const { key } = event;
+  const lowerKey = key.toLowerCase();
+
+  switch (lowerKey) {
+    case "arrowleft":
+      updateVideoTime(-SKIP_TIME);
       break;
-    case "ArrowRight":
-      mg_video.currentTime += 10;
-      mg_starttime.innerHTML = formatTime(mg_video.currentTime);
+    case "arrowright":
+      updateVideoTime(SKIP_TIME);
       break;
-    case "ArrowUp":
+    case "arrowup":
       soundUp();
       break;
-    case "ArrowDown":
+    case "arrowdown":
       soundDown();
       break;
     case "f":
-    case "F":
       fullscreenOnOff();
       break;
     case " ":
       playPause();
-      event.preventDefault(); // Prevents scrolling
+      event.preventDefault();
       break;
   }
 }
 
 function playerClick(event) {
   mouseMoving();
-  if (
-    !mg_settings_block.classList.contains("mg_settings_hidden") &&
-    !mg_controls.contains(event.target)
-  ) {
+
+  const settingsVisible =
+    !mg_settings_block.classList.contains("mg_settings_hidden");
+  const clickedOutsideControls = !mg_controls.contains(event.target);
+
+  if (settingsVisible && clickedOutsideControls) {
     closeSettings();
   }
 }
 
 function skipLeft() {
-  mg_video.currentTime -= 10;
-  mg_starttime.innerHTML = formatTime(mg_video.currentTime);
-  measureTime(mg_video.currentTime);
+  updateVideoTime(-SKIP_TIME);
 }
 
 function skipRight() {
-  mg_video.currentTime += 10;
-  mg_starttime.innerHTML = formatTime(mg_video.currentTime);
-  measureTime(mg_video.currentTime);
+  updateVideoTime(SKIP_TIME);
 }
 
 function skipLeftDbl(e) {
@@ -817,27 +880,43 @@ function skipRightDbl(e) {
   mg_starttime.innerHTML = formatTime(mg_video.currentTime);
   measureTime(mg_video.currentTime);
 }
+const CONTROL_ELEMENTS = {
+  main: mg_controls,
+  eps: mg_player_eps,
+  player: mg_player,
+  mobilePlay: playElements.mg_play_pause_mobile,
+};
 
 function hideControls() {
-  mg_controls.classList.add("mg_controls_hidden");
-  if (
-    !mg_player_eps_container.classList.contains("mg_player_eps_container_show")
-  ) {
-    mg_player_eps.classList.add("mg_controls_hidden");
-    closeEpisodes();
-  }
-  mg_player.classList.add("mg_hide_cursor");
-  playElements.mg_play_pause_mobile.classList.add("mg_controls_hidden");
+  Object.values(CONTROL_ELEMENTS).forEach((el) => {
+    if (el === CONTROL_ELEMENTS.eps) {
+      if (
+        !mg_player_eps_container.classList.contains(
+          "mg_player_eps_container_show"
+        )
+      ) {
+        el.classList.add("mg_controls_hidden");
+        closeEpisodes();
+      }
+    } else if (el === CONTROL_ELEMENTS.player) {
+      el.classList.add("mg_hide_cursor");
+    } else {
+      el.classList.add("mg_controls_hidden");
+    }
+  });
+
   closeSettings();
 }
 
 function showControls() {
-  mg_controls.classList.remove("mg_controls_hidden");
-  mg_player_eps.classList.remove("mg_controls_hidden");
-  mg_player.classList.remove("mg_hide_cursor");
-  playElements.mg_play_pause_mobile.classList.remove("mg_controls_hidden");
+  Object.entries(CONTROL_ELEMENTS).forEach(([key, el]) => {
+    if (el === CONTROL_ELEMENTS.player) {
+      el.classList.remove("mg_hide_cursor");
+    } else {
+      el.classList.remove("mg_controls_hidden");
+    }
+  });
 }
-
 function stoppedMoving() {
   hideControls();
 }
@@ -930,61 +1009,65 @@ function removeSeeTime() {
   mg_timeline_helper.style.opacity = 0;
   mg_time_indicator_helper.style.width = "0%";
 }
+function updateTimelineHelper(positionX, elementWidth, isTouch = false) {
+  const timelineRect = mg_timeline_scaler.getBoundingClientRect();
+  const timelineWidth = isTouch ? timelineRect.width : elementWidth;
+  const relativeX = isTouch ? positionX - timelineRect.left : positionX;
+
+  const percentage = Math.max(
+    0,
+    Math.min(100, (relativeX / timelineWidth) * 100)
+  );
+  const vidTime = percentageToTime(percentage);
+
+  if (!vidTime) return;
+
+  mg_timeline_helper.style.opacity = "1";
+  mg_timeline_helper.style.transform = `translateX(${
+    (isTouch ? positionX - timelineRect.left : positionX) -
+    mg_timeline_helper.offsetWidth / 2
+  }px)`;
+
+  mg_timeline_helper_time.textContent = formatTime(vidTime);
+  mg_time_indicator_helper.style.width = `${percentage}%`;
+}
 
 function seeTime(pointer) {
   if (pointer.pointerType === "touch" || !is_loaded) return;
-
-  const timelineWidth = mg_timeline_scaler.offsetWidth;
-  const getPer = (100 / timelineWidth) * pointer.offsetX;
-  mg_timeline_helper.style.opacity = 1;
-  mg_timeline_helper.style.transform = `translateX(${
-    pointer.offsetX - mg_timeline_helper.offsetWidth / 2
-  }px)`;
-  const vidTime = percentageToTime(getPer);
-  if (vidTime) {
-    mg_timeline_helper_time.innerHTML = formatTime(vidTime);
-    mg_time_indicator_helper.style.width = getPer + "%";
-  }
+  updateTimelineHelper(pointer.offsetX, mg_timeline_scaler.offsetWidth);
 }
 
 function seeTimeTouch(event) {
   if (!is_loaded) return;
-
-  const touch = event.touches[0];
-  const getPer =
-    (100 / mg_timeline_scaler.offsetWidth) *
-    (touch.clientX - mg_timeline_scaler.getBoundingClientRect().left);
-  mg_timeline_helper.style.opacity = 1;
-  mg_timeline_helper.style.transform = `translateX(${
-    touch.clientX -
-    mg_timeline_scaler.getBoundingClientRect().left -
-    mg_timeline_helper.offsetWidth / 2
-  }px)`;
-  const vidTime = percentageToTime(getPer);
-  mg_timeline_helper_time.innerHTML = formatTime(vidTime);
-  mg_time_indicator_helper.style.width = getPer + "%";
+  updateTimelineHelper(event.touches[0].clientX, 0, true);
 }
-
-function measureTimeMouse(mouse) {
+function updateVideoTime(position, isTouch = false) {
   if (!is_loaded) return;
 
-  const getPer = (100 / mg_timeline_scaler.offsetWidth) * mouse.offsetX;
-  mg_time_indicator.style.width = getPer + "%";
-  mg_video.currentTime = (mg_video.duration / 100) * getPer;
+  const timelineWidth = mg_timeline_scaler.offsetWidth;
+  const rect = isTouch ? mg_timeline_scaler.getBoundingClientRect() : null;
+
+  const relativePos = isTouch ? position - rect.left : position;
+
+  const percentage = Math.max(
+    0,
+    Math.min(100, (relativePos / timelineWidth) * 100)
+  );
+
+  mg_time_indicator.style.width = `${percentage}%`;
+
+  const newTime = (mg_video.duration / 100) * percentage;
+  mg_video.currentTime = isTouch ? Number(newTime.toFixed(6)) : newTime;
+
+  if (isTouch) {
+    mg_starttime.textContent = formatTime(mg_video.currentTime);
+  }
 }
 
-function measureTimeTouch(event) {
-  if (!is_loaded) return;
-
-  const position =
-    event instanceof MouseEvent
-      ? event.offsetX
-      : event.touches[0].clientX -
-        mg_timeline_scaler.getBoundingClientRect().left;
-  const getPer = (100 / mg_timeline_scaler.offsetWidth) * position;
-  mg_time_indicator.style.width = getPer + "%";
-  mg_video.currentTime = ((mg_video.duration / 100) * getPer).toFixed(6);
-  mg_starttime.innerHTML = formatTime(mg_video.currentTime);
+function handleTimeInput(event) {
+  const isTouch = !(event instanceof MouseEvent);
+  const position = isTouch ? event.touches[0].clientX : event.offsetX;
+  updateVideoTime(position, isTouch);
 }
 
 function measureTime(time) {
@@ -1092,13 +1175,151 @@ function changeSounds(state) {
 }
 
 function firstStart() {
-  mg_video.play();
   mg_main_play.parentNode.removeChild(mg_main_play);
+  if (!MG_PLAYER.preroll) {
+    mg_video.play();
+    is_started = true;
+    setTimeout(() => {
+      FOCUSED = true;
+    }, 50);
+    changeControls("play");
+  } else {
+    preRollInitialize();
+  }
+}
+
+let mg_pre_roll,
+  mg_pre_roll_video,
+  mg_pre_roll_video_skip,
+  mg_pre_roll_volume,
+  mg_pre_roll_indicator;
+
+function skipAd() {
+  mg_pre_roll.remove();
+  mg_video.play();
   is_started = true;
   setTimeout(() => {
     FOCUSED = true;
   }, 50);
   changeControls("play");
+  mg_pre_roll_video.removeEventListener("ended", changeSkipTime);
+  mg_pre_roll_video_skip.removeEventListener("click", skipAd);
+  mg_pre_roll_volume.removeEventListener("click", toggleVolume);
+  mg_pre_roll_video.removeEventListener("timeupdate", changeSkipTime);
+  mg_pre_roll_video.removeEventListener("error", skipAd);
+  if (mg_player_eps) {
+    mg_player_eps.classList.remove("mg_eps_hide");
+  }
+}
+function changeSkipTime() {
+  if (mg_pre_roll_video.currentTime >= 5) {
+    mg_pre_roll_video_skip.textContent = "გამოტოვე";
+    mg_pre_roll_video.addEventListener("ended", changeSkipTime);
+    mg_pre_roll_video_skip.addEventListener("click", skipAd);
+  } else {
+    mg_pre_roll_video_skip.textContent = `გამოტოვე ${Math.ceil(
+      5 - mg_pre_roll_video.currentTime
+    )}`;
+  }
+  if (!mg_pre_roll_video.duration) return;
+  if (!mg_pre_roll_video.currentTime) return;
+
+  requestAnimationFrame(() => {
+    mg_pre_roll_indicator.style.width =
+      (
+        mg_pre_roll_video.currentTime /
+        (mg_pre_roll_video.duration / 100)
+      ).toFixed(2) + "%";
+  });
+}
+function toggleVolume() {
+  if (mg_pre_roll_video.volume > 0) {
+    mg_pre_roll_video.volume = 0;
+    mg_pre_roll_volume.classList.add("pre_roll_muted");
+  } else {
+    mg_pre_roll_video.volume = 1;
+    mg_pre_roll_volume.classList.remove("pre_roll_muted");
+  }
+}
+function createPreRollAd() {
+  if (!MG_PLAYER.preroll) return;
+  const mg_pre_roll = document.createElement("div");
+  mg_pre_roll.classList.add("mg_pre_roll");
+
+  const mg_pre_roll_video = document.createElement("video");
+  mg_pre_roll_video.classList.add("mg_pre_roll_video");
+  mg_pre_roll_video.src = MG_PLAYER.preroll;
+  mg_pre_roll_video.preload = "auto";
+
+  const mg_pre_roll_volume = document.createElement("div");
+  mg_pre_roll_volume.classList.add("mg_pre_roll_volume");
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg.setAttribute("height", "26");
+  svg.setAttribute("width", "26");
+  svg.setAttribute("viewBox", "0 0 512 512");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("fill", "white");
+  path.setAttribute("opacity", "0.9");
+  path.setAttribute("fill-rule", "evenodd");
+  path.setAttribute(
+    "d",
+    "m403.966 426.944l-33.285-26.63c74.193-81.075 74.193-205.015-.001-286.09l33.285-26.628c86.612 96.712 86.61 242.635.001 339.348M319.58 155.105l-33.324 26.659c39.795 42.568 39.794 108.444.001 151.012l33.324 26.658c52.205-58.22 52.205-146.109-.001-204.329m-85.163-69.772l-110.854 87.23H42.667v170.666h81.02l110.73 85.458z"
+  );
+
+  svg.appendChild(path);
+  mg_pre_roll_volume.appendChild(svg);
+
+  const mg_pre_roll_timeline = document.createElement("div");
+  mg_pre_roll_timeline.classList.add("mg_pre_roll_timeline");
+
+  const mg_pre_roll_indicator = document.createElement("div");
+  mg_pre_roll_indicator.classList.add("mg_pre_roll_indicator");
+
+  mg_pre_roll_timeline.appendChild(mg_pre_roll_indicator);
+
+  const mg_pre_roll_video_skip = document.createElement("div");
+  mg_pre_roll_video_skip.classList.add("mg_pre_roll_video_skip");
+  mg_pre_roll_video_skip.textContent = "გამოტოვე 5"; // Initial text
+
+  mg_pre_roll.appendChild(mg_pre_roll_video);
+  mg_pre_roll.appendChild(mg_pre_roll_volume);
+  mg_pre_roll.appendChild(mg_pre_roll_timeline);
+  mg_pre_roll.appendChild(mg_pre_roll_video_skip);
+
+  mg_player.appendChild(mg_pre_roll);
+
+  return {
+    mg_pre_roll,
+    mg_pre_roll_video,
+    mg_pre_roll_video_skip,
+    mg_pre_roll_volume,
+    mg_pre_roll_indicator,
+  };
+}
+
+function preRollInitialize() {
+  ({
+    mg_pre_roll,
+    mg_pre_roll_video,
+    mg_pre_roll_video_skip,
+    mg_pre_roll_volume,
+    mg_pre_roll_indicator,
+  } = createPreRollAd());
+
+  if (mg_main_play.parentNode) {
+    mg_main_play.parentNode.removeChild(mg_main_play);
+  }
+
+  if (mg_player_eps) {
+    mg_player_eps.classList.add("mg_eps_hide");
+  }
+  mg_pre_roll_video.addEventListener("timeupdate", changeSkipTime);
+  mg_pre_roll_volume.addEventListener("click", toggleVolume);
+  mg_pre_roll_video.play();
+  mg_pre_roll_video.addEventListener("error", skipAd);
 }
 
 const mediaQuery = window.matchMedia("(orientation: landscape)");
@@ -1187,7 +1408,8 @@ function getCheckOfControls() {
   const selectedVideo =
     MG_PLAYER.languages[mg_main_controls.lang]?.[mg_main_controls.quality] ||
     MG_PLAYER.languages.GEO?.[mg_main_controls.quality] ||
-    MG_PLAYER.languages.GEO?.HD;
+    MG_PLAYER.languages.GEO?.HD ||
+    MG_PLAYER.languages.ENG?.HD;
 
   mg_speed_button.forEach((item) => {
     if (item.innerHTML.trim() == mg_main_controls.speed) {
@@ -1371,6 +1593,7 @@ function changeInitialEpisode(episode) {
 function changeEpisode(episode) {
   InitializeVideo(episode);
   if (MG_PLAYER.seasons[active_season][active_episode - 1].subtitles?.GEO) {
+    mg_subtitles_toggle.classList.add("mg_subtitles_show");
     subtitlesRenew(
       MG_PLAYER.seasons[active_season][active_episode - 1].subtitles.GEO
     );
@@ -1383,8 +1606,12 @@ function changeEpisode(episode) {
   mg_save[0].season = active_season;
   localStorage.setItem("mg_player", JSON.stringify(mg_save));
   MG_PLAYER.languages = getEpisodesObjectRequest();
-  if (!is_started) firstStart();
-  playPauseHand("play");
+  if (!MG_PLAYER.preroll) {
+    if (!is_started) firstStart();
+    playPauseHand("play");
+  } else {
+    preRollInitialize();
+  }
 }
 function subtitlesRenew(new_link) {
   const oldTrack = document.querySelector("#mg_subtitles");
